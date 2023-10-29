@@ -99,10 +99,10 @@ export default {
         }
 
         try {
-          const response = await this.$http.post('/auth/register', {
+          const response = await this.$http.post('/v1/auth/register', {
             userid: this.form.userid,
+            password: this.form.password,
             realname: this.form.realname,
-            userpassword: this.form.password,
           });
 
           if (response.data.code === 200) {

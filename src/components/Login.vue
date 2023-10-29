@@ -60,7 +60,7 @@
         }
 
        try {
-          const response = await this.$http.post('/auth/login', {
+          const response = await this.$http.post('/v1/auth/login', {
             userid: this.form.userid,
             userpassword: this.form.password
           })
