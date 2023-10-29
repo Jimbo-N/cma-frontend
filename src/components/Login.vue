@@ -5,12 +5,12 @@
           <img src="@/assets/logo.png" alt="Logo" class="logo">
         </div>
         <h1 class="login-title">欢迎登录</h1>
-        <el-form @submit.native.prevent="handleSubmit" @keyup.enter="handleSubmit" class="login-form">
-          <el-form-item>
-            <el-input v-model="userid" prefix-icon="el-icon-user" placeholder="工号"></el-input>
+        <el-form @submit.native.prevent="handleSubmit" @keyup.enter="handleSubmit" :model="form" :rules="rules" ref="loginForm" class="login-form">
+          <el-form-item prop="userid">
+            <el-input v-model="form.userid" prefix-icon="el-icon-user" placeholder="工号"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-input type="password" v-model="userpassword" prefix-icon="el-icon-lock" placeholder="密码"></el-input>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="form.password" prefix-icon="el-icon-lock" placeholder="密码"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" block @click="handleSubmit">登录</el-button>
@@ -28,16 +28,41 @@
   export default {
     data() {
       return {
+        form:{
         userid: '',
-        userpassword: '',
+        password: '',
+        },
+        rules:{
+          userid: [
+          { required: true, message: '工号不能为空', trigger: 'blur' },
+          { validator: (rule, value, callback) => {
+              if (!/^\d{3}$/.test(value)) {
+                  callback(new Error('工号长度为3位数'));
+              } else {
+                  callback();
+              }
+            }, trigger: 'blur'
+          }
+        ],
+          password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 8, max: 16, message: '密码长度必须在8-16个字符', trigger: 'blur' }
+        ],
+        }
       }
     },
     methods: {
       async handleSubmit() {
-        try {
+        this.$refs.loginForm.validate(async (valid) => {
+        if (!valid) {
+          this.$message.error('登录表单不符合要求');
+          return;
+        }
+
+       try {
           const response = await this.$http.post('/auth/login', {
-            userid: this.userid,
-            userpassword: this.userpassword
+            userid: this.form.userid,
+            userpassword: this.form.password
           })
           if (response.data.code === 200) {
             this.$message.success(response.data.msg)
@@ -50,6 +75,7 @@
         } catch (error) {
           this.$message.error('登录失败')
         }
+      });
       },
       goToRegister() { 
         this.$router.push('/register'); 
