@@ -62,7 +62,7 @@
        try {
           const response = await this.$http.post('/v1/auth/login', {
             userid: this.form.userid,
-            userpassword: this.form.password
+            password: this.form.password
           })
           if (response.data.code === 200) {
             this.$message.success(response.data.msg)
