@@ -66,7 +66,7 @@
           })
           if (response.data.code === 200) {
             this.$message.success(response.data.msg)
-            localStorage.setItem('token', response.data.jwt)
+            localStorage.setItem('token', response.data)
             this.$router.push('/*');
           } else {
             this.$message.error(response.data.msg)
