@@ -67,7 +67,7 @@
           if (response.data.code === 200) {
             this.$message.success(response.data.msg)
             localStorage.setItem('token', response.data)
-            this.$router.push('/*');
+            this.$router.push('/projects');
           } else {
             this.$message.error(response.data.msg)
             console.log(response.data.msg)
