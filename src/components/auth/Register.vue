@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import SIdentify from "@/components/SIdentify.vue"
+import SIdentify from "@/components/auth/SIdentify.vue"
 
 
 export default {

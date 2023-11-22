@@ -2,10 +2,15 @@ import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import axios from 'axios'
+
+// 引用mock
+import './mock/index.js';
+
+import axios from 'axios';
 import router from './router';
-Vue.prototype.$http = axios;
-axios.defaults.baseURL = "http://localhost:8090"
+Vue.prototype.$http = axios
+//axios.defaults.baseURL = "http://localhost:8090"
+
 
 // 添加请求拦截器
 axios.interceptors.request.use(config => {
