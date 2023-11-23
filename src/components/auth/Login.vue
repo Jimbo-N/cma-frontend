@@ -31,6 +31,9 @@
         form:{
         userid: '',
         password: '',
+        username:'',
+        token:'',
+        privilege:0,
         },
         rules:{
           userid: [
@@ -60,13 +63,16 @@
         }
 
        try {
-          const response = await this.$http.post('/v1/auth/login', {
+          const response = await this.$http.post('/v1/user/login', {
             userid: this.form.userid,
             password: this.form.password
           })
           if (response.data.code === 200) {
-            this.$message.success(response.data.msg)
-            localStorage.setItem('token', response.data)
+
+            
+            localStorage.setItem('token', response.data.data.token)
+            this.form.token=response.data.data.token
+            this.getuserinfo()
             this.$router.push('/projects');
           } else {
             this.$message.error(response.data.msg)
@@ -77,6 +83,26 @@
         }
       });
       },
+      async getuserinfo()
+      {
+        try {
+          const response = await this.$http.post('/v1/user/getuserinfo', {
+            token:this.form.token
+          })
+          if (response.data.code === 200) {
+            
+            localStorage.setItem('userid', response.data.data.id)
+            localStorage.setItem('realname', response.data.data.realname)
+            localStorage.setItem('privilege', response.data.data.privilege)
+          } else {
+            this.$message.error(response.data.msg)
+            console.log(response.data.msg)
+          }
+        } catch (error) {
+          this.$message.error('登录失败')
+        }
+      }
+      ,
       goToRegister() { 
         this.$router.push('/register'); 
       },

@@ -47,8 +47,8 @@
         <el-table  stripe :data="projects"   >
           <el-table-column prop="name" label="项目名称"></el-table-column>
           <el-table-column prop="status" label="状态"></el-table-column>
-          <el-table-column prop="person" label="负责人"></el-table-column>
-          <el-table-column prop="datetime" label="日期"></el-table-column>
+          <el-table-column prop="createUser.realname" label="创建人"></el-table-column>
+          <el-table-column prop="createTime" label="创建日期"></el-table-column>
           <el-table-column>
             <template slot-scope="scope">
               <el-button @click="gotoDetails(scope.row.id)">查看</el-button>
@@ -73,41 +73,41 @@
   export default {
     data() {
       return {
-        username:localStorage.getItem('username'),
+        username:localStorage.getItem('realname'),
         userid: localStorage.getItem('userid'),
         projects: [],
         totalPages: 0,
         currentPage: 1,
         pageSize: 5,
         totalResults: 0,
-        keyword: null
+        keyword: ''
         
       };
     },
     created() {
       //应该是在登陆成功后放的，先放在这了
-      localStorage.setItem('username','张三')
-      localStorage.setItem('userid','010')
+   
       this.fetchProjects();
     },
     methods: {
       async fetchProjects() {
         try {
-          const response = await this.$http.post('/v1/project/listAllPage', {
-            params: {
+          const response = await this.$http.post('/v1/project/listsearchPage', {
+            
+              token: localStorage.getItem('token'),
               pagenumber: this.currentPage,
               pagesize: this.pageSize,
               search:this.keyword
-            }
+            
           });
           console.log('后端返回：'+response.data.data.current)
           console.log(response.data.data.projects)
-          this.projects = response.data.data.projects;
+          this.projects = response.data.data.records;
 
           this.currentPage = response.data.data.current;
           this.pageSize = response.data.data.size;
           this.totalResults = response.data.data.total;
-          this.totalPages = Math.ceil(this.totalResults/this.pageSize);
+          this.totalPages = response.data.data.pages;
         } catch (error) {
           console.error('请求错误:', error);
         }

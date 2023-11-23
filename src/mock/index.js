@@ -1,5 +1,5 @@
  import Mock from 'mockjs';
-
+/*
 
 Mock.mock(/\/v1\/project\/listAllPage/, 'post', (req) => {
   console.log("req.body:"+req.body)
@@ -24,4 +24,4 @@ Mock.mock(/\/v1\/project\/listAllPage/, 'post', (req) => {
     }
   });
 });
-
+*/
