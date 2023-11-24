@@ -61,7 +61,7 @@
           @size-change="handleSizeChange"
           :current-page="currentPage"
           :page-size="pageSize"
-          :page-sizes="[5, 10, 15, 20]"
+          :page-sizes="[8, 10, 15, 20]"
           layout="sizes, total,prev, pager, next"
           :total="totalResults">
         </el-pagination>
@@ -78,7 +78,7 @@
         projects: [],
         totalPages: 0,
         currentPage: 1,
-        pageSize: 5,
+        pageSize: 8,
         totalResults: 0,
         keyword: ''
         
@@ -86,7 +86,6 @@
     },
     created() {
       //应该是在登陆成功后放的，先放在这了
-   
       this.fetchProjects();
     },
     methods: {
@@ -122,6 +121,7 @@
       onSearchClick(){
         console.log(this.keyword)
         this.currentPage = 1
+        this.fetchProjects()
       },
       handleSizeChange(newSize){
         this.pageSize = newSize
@@ -198,6 +198,7 @@
 
   .user-info {
     padding-left: 10px;
+    margin-top:5px;
     font-weight: bold; /* 用户信息加粗 */
   }
 
