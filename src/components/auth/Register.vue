@@ -106,7 +106,7 @@ export default {
           });
 
           if (response.data.code === 200) {
-            this.$message.success(response.data.msg);
+            this.$message.success("注册成功");
             this.goToLogin();
           } else {
             this.$message.error(response.data.msg);
@@ -165,8 +165,8 @@ export default {
 }
 
 .logo {
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: auto
 }
 
 .login-title {

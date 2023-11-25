@@ -138,8 +138,8 @@
   }
   
   .logo {
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: auto
   }
   
   .login-title {

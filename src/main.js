@@ -17,7 +17,8 @@ axios.interceptors.request.use(config => {
   // 从localStorage中获取token
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers['token'] = token;  // 修改这里
+     // 修改这里
+    config.data['token']=token;
   }
   return config;
 }, error => {
