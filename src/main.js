@@ -9,7 +9,7 @@ import './mock/index.js';
 import axios from 'axios';
 import router from './router';
 Vue.prototype.$http = axios
-axios.defaults.baseURL = "http://localhost:8090"
+//axios.defaults.baseURL = "http://localhost:8090"
 
 
 // 添加请求拦截器

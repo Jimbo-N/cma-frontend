@@ -1,11 +1,11 @@
  import Mock from 'mockjs';
-/*
 
-Mock.mock(/\/v1\/project\/listAllPage/, 'post', (req) => {
+
+Mock.mock(/\/v1\/project\/listsearchPage/, 'post', (req) => {
   console.log("req.body:"+req.body)
   const reqbody = JSON.parse(req.body)
-  const pageSize = parseInt(reqbody.params.pagesize)||10 //默认大小为10
-  const page = parseInt(reqbody.params.pagenumber)||1
+  const pageSize = parseInt(reqbody.pagesize)||10 //默认大小为10
+  const page = parseInt(reqbody.pagenumber)||1
   
   return Mock.mock({
     'code': 1,
@@ -14,14 +14,16 @@ Mock.mock(/\/v1\/project\/listAllPage/, 'post', (req) => {
       'total': 100,
       'current': page ,
       'size': pageSize,
-      [`projects|${pageSize}`]: [{ 
+      [`records|${pageSize}`]: [{ 
         'id|+1':1,
         'name': '@word(5)',
         'status|1': ['未完成', '进行中', '已完成'],
-        'person': '@cname',
-        'datetime': '@date'
+        'createUser':{
+          'realname':'@cname'
+        } ,
+        'createTime': '@date'
       }]
     }
   });
 });
-*/
+
