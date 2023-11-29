@@ -199,26 +199,7 @@ export default {
       this.pageSize = newSize
       this.fetchProjects()
     },
-    gotoMain() {
-      if (this.$route.path !== "/projects") {
-        this.$router.push("/projects");
-      }
-    },
-    gotoEmp() {
-      if (this.$route.path !== "/employee") {
-        this.$router.push("/employee");
-      }
-    },
-    gotoStandardlib() {
-      if (this.$route.path !== "/standardlib") {
-        this.$router.push("/standardlib");
-      }
-    },
-    gotoEquipmentlib() {
-      if (this.$route.path !== "/equipmentlib") {
-        this.$router.push("/equipmentlib");
-      }
-    }
+   
   }
 };
 </script>
@@ -228,34 +209,7 @@ export default {
   padding: 0 100px;
 }
 
-.header {
-  position: fixed;
-  top: 0;
-  left: 120px;
-  right: 120px;
-  /* left: 0;
-    right: 0; */
-  z-index: 1000;
-  background-color: #FFFFFF;
-  border-bottom: solid;
-  border-color: #66666672;
-  /* box-shadow: 0 2px 4px rgba(0,0,0,.1);  */
-}
 
-.header img {
-  cursor: pointer;
-}
-
-.header .el-button {
-  /* color:#333; */
-  font-weight: 500;
-  font-size: 17px;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
-}
-
-.header .el-col {
-  margin-top: 5px;
-}
 
 .el-main {
   padding-top: 20px;
