@@ -189,6 +189,7 @@ export default {
     },
     gotoDetails(id) {
       console.log(id)
+      this.$router.push({ name: 'standard', params: { projectid:id } });    
     },
     onSearchClick() {
       console.log(this.keyword)
