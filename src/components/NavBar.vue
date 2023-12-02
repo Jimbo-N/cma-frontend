@@ -34,7 +34,9 @@
     },
     methods: {
       gotoMain() {
-        this.$router.push("/projects");
+        if (this.$route.path !== "/projects") {
+          this.$router.push("/projects");
+        }
       },
       gotoEmp() {
         this.$router.push("/employee");
