@@ -120,7 +120,7 @@ export default {
     //   console.log(this.value)
     // },
     changeDevice() {
-      const h = this.$createElement;          //发送数据
+      const h = this.$createElement;          //
       this.$message({
         message: h('p', null, [
           h('i', { style: 'color: rgb(90,156,248)' }, '保存成功')
