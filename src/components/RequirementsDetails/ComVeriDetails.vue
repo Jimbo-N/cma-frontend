@@ -70,7 +70,7 @@ export default {
         return state.tableData;
       }
       return state.tableData.filter((data) =>
-        data.name.toLowerCase().includes(state.keyword.toLowerCase())
+        data.name.toLowerCase().includes(state.keyword.toLowerCase())//gihf
       );
     });
 
