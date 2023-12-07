@@ -1,3 +1,4 @@
+
 <template>
     <el-container>
         <el-main class="out">
@@ -10,37 +11,84 @@
                     <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
                     <el-breadcrumb-item :to="{ name: 'subprojects', params: this.params }">产品/项目/参数</el-breadcrumb-item>
                     <el-breadcrumb-item :to="{ name: 'requirements', params: this.params }">要求</el-breadcrumb-item>
-                    <el-breadcrumb-item>设备详细</el-breadcrumb-item>
+                    <el-breadcrumb-item>设备选择</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
             <el-row class="nowpos">
-                <p>当前项目:<span>{{ this.projectid }}</span></p>
-                <p>当前标准:<span>{{ this.standardid }}</span></p>
-                <P>当前参数:<span>{{ this.subpid }}</span></P>
-                <p>当前位置:<span>设备详细</span></p>
+                <p>当前项目:<span>{{ $route.params.projectid }}</span></p>
+                <p>当前标准:<span>{{ $route.params.standardid }}</span></p>
+                <P>当前参数:<span>{{ $route.params.subpid }}</span></P>
+                <p>当前位置:<span>设备选择</span></p>
             </el-row>
-            <el-row class="modifybtn">
-                <el-button type="warning" @click="changeDevice()">编辑设备</el-button>
-            </el-row>
-            <el-row class="cont" type="flex" justify="center" style="width: 100%;">
-                <el-col :span="20">
-                    <el-table stripe :data="devices">
-                        <el-table-column prop="did" label="设备编号"></el-table-column>
-                        <el-table-column prop="dname" label="设备名称"></el-table-column>
-                        <el-table-column prop="dstate" label="状态"></el-table-column>
-                        <el-table-column>
-                            <template slot-scope="scope">
-                                <el-button @click="">查看</el-button>
-                            </template>
-                        </el-table-column>
+            <el-row class="cont" type="flex" justify="center">
+                <el-col class="transfer-container transfer-zoom">
+                    <el-transfer class="my-transfer" filterable :filter-method="filterMethod" filter-placeholder="搜素设备"
+                        :titles="['设备库', '已选设备']" v-model="value" :buttonposition="right" :data="data">
+                    </el-transfer>
 
-                    </el-table>
                 </el-col>
+                <!-- <el-button @click='debug()'>dedede</el-button> -->
+
+            </el-row>
+            <el-row>
+                <el-button class="savebtn" @click="changeDevice()">保存设置</el-button>
             </el-row>
 
         </el-main>
     </el-container>
 </template>
+  
+<script>
+import NavBar from '@/components/NavBar.vue';
+export default {
+    components: {
+        NavBar
+    },
+    data() {
+        const generateData = _ => {
+            const data = [];
+            const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];      //获取后端数据
+            const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
+            cities.forEach((city, index) => {
+                data.push({
+                    label: city,
+                    key: index,
+                    pinyin: pinyin[index] + cities[index]
+                });
+            });
+            return data;
+        };
+        return {
+            data: generateData(),
+            value: [],              //获取后端数据
+            filterMethod(query, item) {
+                return item.pinyin.indexOf(query) > -1;
+            },
+            projectid: this.$route.params.projectid,
+            standardid: this.$route.params.standardid,
+            subpid: this.$route.params.subpid
+        };
+    },
+    methods: {
+        // debug(){
+        //   console.log("value=")
+        //   console.log(this.value)
+        // },
+        changeDevice() {
+            const h = this.$createElement;          //
+            this.$message({
+                message: h('p', null, [
+                    h('i', { style: 'color: rgb(90,156,248)' }, '保存成功')
+                ]),
+                type: 'success'
+            });
+        }
+    }
+
+}
+
+
+</script>
   
 <style>
 .out {
@@ -50,7 +98,7 @@
     align-items: center;
 }
 
-.sel {
+.my-transfer {
     text-align: left;
 }
 
@@ -71,78 +119,13 @@
 .nowpos span {
     font-weight: 1000;
 }
-.modifybtn{
-    width: 100%;
-    display: flex;
-    justify-content: left;
-    padding-left: 100px;
+
+.savebtn {
+    margin: 50px;
 }
 
+.transfer-zoom {
+    transform: scale(1.2);
+    /* 调整放大倍数 */
+}
 </style>
-  
-<script>
-import NavBar from '@/components/NavBar.vue';
-export default {
-    components: {
-        NavBar
-    },
-    data() {
-        return {
-            projectid: this.$route.params.projectid,
-            standardid: this.$route.params.standardid,
-            subpid: this.$route.params.subpid,
-            devices: [
-                {
-                    did: 1,
-                    dname: '机器1',
-                    dstate: '已完成'
-                },
-                {
-                    did: 2,
-                    dname: '机器2',
-                    dstate: '未完成'
-                },
-                {
-                    did: 3,
-                    dname: '机器3',
-                    dstate: '已完成'
-                }
-            ]
-        };
-    },
-    methods: {
-        changeDevice(){
-            this.$router.push({ name: 'equipment', params: this.params }) 
-        }
-
-    },
-
-    created() {
-        //   alert(123);
-        if(this.projectid!=null){
-            localStorage.setItem('projectid', JSON.stringify(this.projectid));
-        }
-        if(this.standardid!=null){
-            localStorage.setItem('standardid', JSON.stringify(this.standardid));
-        }
-        if(this.subpid!=null){
-            localStorage.setItem('subpid', JSON.stringify(this.subpid));
-        }
-        
-        const savedprojectid = localStorage.getItem('projectid');
-        const savedstandardid = localStorage.getItem('standardid');
-        const savedsubpid = localStorage.getItem('subpid');
-        if (savedprojectid) {
-            this.projectid = JSON.parse(savedprojectid);
-        }
-        if (savedstandardid) {
-            this.standardid = JSON.parse(savedstandardid);
-        }
-        if (savedsubpid) {
-            this.subpid = JSON.parse(savedsubpid);
-        }
-    }
-}
-
-
-</script>
