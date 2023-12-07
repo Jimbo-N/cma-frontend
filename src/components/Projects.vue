@@ -162,7 +162,7 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await this.$http.post('/v1/project/listsearchPage', {
+        const response = await this.$http.post('/v1/project/listSearchPage', {
 
           token: localStorage.getItem('token'),
           pagenumber: this.currentPage,
