@@ -17,7 +17,7 @@
           <el-avatar icon="el-icon-user-solid"></el-avatar>
             <div class="user-info">
               <p class="user-id">{{ userid }}</p>
-              <p class="user-name">{{ username }}</p>
+              <p class="user-name">{{ realname }}</p>
             </div>
         </el-col>
       </el-row>
@@ -28,7 +28,7 @@
   export default {
     data() {
       return {
-        username: localStorage.getItem('username'),
+        realname: localStorage.getItem('realname'),
         userid: localStorage.getItem('userid'),
       };
     },
