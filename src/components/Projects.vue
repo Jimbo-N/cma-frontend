@@ -27,7 +27,6 @@
             <el-button type="danger" @click="deleteproject(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
-
       </el-table>
 
       <el-pagination class="bottom" @current-change="handlePageChange" @size-change="handleSizeChange"
@@ -163,7 +162,7 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await this.$http.post('/v1/project/listsearchPage', {
+        const response = await this.$http.post('/v1/project/listSearchPage', {
 
           token: localStorage.getItem('token'),
           pagenumber: this.currentPage,
