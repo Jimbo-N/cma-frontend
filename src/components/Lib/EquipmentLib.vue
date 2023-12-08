@@ -47,33 +47,33 @@
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="有效截止日期">
+              <el-form-item label="有效截止日期" >
                 <span>{{ props.row.effective_date }}</span>
               </el-form-item>
               <el-form-item label="设备来源">
                 <span>{{ props.row.source }}</span>
               </el-form-item>
               <el-form-item label="设备计量证书">
-                <span>{{ props.row.certificate }}</span>
+                <el-button type="text" v-if="props.row.certificate" @click="download(props.row.certificate.id)">{{ props.row.certificate.fileName }}</el-button>
               </el-form-item>
               <el-form-item label="仪器操作规程">
-                <span>{{ props.row.rules }}</span>
+                <el-button type="text" v-if="props.row.rules"  @click="download(props.row.rules.id)">{{ props.row.rules.fileName }}</el-button>
               </el-form-item>
               <el-form-item label="仪器授权使用人员">
-                <span>{{ props.row.people }}</span>
+                <el-button type="text" v-if="props.row.people"  @click="download(props.row.people.id)">{{ props.row.people.fileName }}</el-button>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
 
 
-        <el-table-column prop="number" label="*仪器设备编号"></el-table-column>
-        <el-table-column prop="name" label="*名称"></el-table-column>
-        <el-table-column prop="type" label="*型号/规格/等级"></el-table-column>
-        <el-table-column prop="measuring_range" label="*测量范围"></el-table-column>
-        <el-table-column prop="buydate" label="*设备购买年份"></el-table-column>
-        <el-table-column prop="trace_method" label="*溯源方式"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column prop="number" label="*仪器设备编号" align="center"></el-table-column>
+        <el-table-column prop="name" label="*名称" align="center"></el-table-column>
+        <el-table-column prop="type" label="*型号/规格/等级" align="center"></el-table-column>
+        <el-table-column prop="measuring_range" label="*测量范围" align="center"></el-table-column>
+        <el-table-column prop="buydate" label="*设备购买年份" align="center"></el-table-column>
+        <el-table-column prop="trace_method" label="*溯源方式" align="center"></el-table-column>
+        <el-table-column label="操作" align="center" >
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-edit" @click="showModifyDialog(scope.row)">修改</el-button>
             <el-button type="text" icon="el-icon-delete" @click="deleteEquipment(scope.row.id)">删除</el-button>
@@ -108,8 +108,9 @@
           </el-form-item>
           <el-form-item label="溯源方式" prop="trace_method">
             <el-select v-model="form.trace_method" placeholder="请选择溯源方式">
-              <el-option value="校准"/>
               <el-option value="检定"/>
+              <el-option value="校准"/>
+              <el-option value="内部校准"/>
               <el-option value="其他方式"/>
             </el-select>
           </el-form-item>
@@ -131,6 +132,7 @@
                 multiple
                 :on-exceed="handleExceed"
                 :limit="1"
+                :file-list="cerList"
                 >
               <el-button size="small" type="primary">点击上传</el-button>
               <!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
@@ -147,6 +149,7 @@
                 multiple
                 :on-exceed="handleExceed"
                 :limit="1"
+                :file-list="rulesList"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
@@ -163,6 +166,7 @@
                 multiple
                 :on-exceed="handleExceed"
                 :limit="1"
+                :file-list="peoList"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
@@ -195,8 +199,9 @@
           </el-form-item>
           <el-form-item label="溯源方式" prop="trace_method">
             <el-select v-model="chosenEquipment.trace_method" placeholder="请选择溯源方式">
-              <el-option value="校准"/>
               <el-option value="检定"/>
+              <el-option value="校准"/>
+              <el-option value="内部校准"/>
               <el-option value="其他方式"/>
             </el-select>
           </el-form-item>
@@ -218,6 +223,7 @@
                 multiple
                 :on-exceed="handleExceed"
                 :limit="1"
+                :file-list="cerList"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
@@ -234,6 +240,7 @@
                 multiple
                 :on-exceed="handleExceed"
                 :limit="1"
+                :file-list="rulesList"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
@@ -250,6 +257,7 @@
                 multiple
                 :on-exceed="handleExceed"
                 :limit="1"
+                :file-list="peoList"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
@@ -269,6 +277,7 @@
 <script>
 import NavBar from '../NavBar.vue';
 import equipmentLib from "@/components/Lib/EquipmentLib.vue";
+import axios from "axios";
 
 export default {
   components:{
@@ -298,6 +307,12 @@ export default {
       }
     };
     return{
+      cerLen:0,
+      rulesLen:0,
+      peopleLen:0,
+      cerList:[],
+      rulesList:[],
+      peoList:[],
       username: localStorage.getItem('username'),
       userid: localStorage.getItem('userid'),
       keyword:'',
@@ -383,37 +398,39 @@ export default {
     handleExceed(files, fileList) {
       // this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       fileList[0].name = files[0].name;
+      // fileList=[files[-1]]
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${ file.name }？`);
     },
     handleCertificate(file,fileList){
       this.form.certificate=file
-      console.log("file=")
-      console.log(file)
+     this.cerLen=fileList.length
+      console.log("cerlen=",this.cerLen)
     },
     handleRules(file,fileList){
       this.form.rules=file
-      console.log("file=")
-      console.log(file)
+      this.rulesLen=fileList.length
+      console.log("rulesfile=",this.rulesLen)
     },
     handlePeople(file,fileList){
       this.form.people=file
-      console.log("file=")
-      console.log(file)
+      this.peopleLen=fileList.length
+      console.log("peopleLen=",this.peopleLen)
     },
     async getEquipments(){
+      console.log("get!!!")
       try {
-        const response = await this.$http.post('/v1/project/listsearchPage', {
+        const response = await this.$http.post('/v1/device/listSearchPage', {
 
-          token: localStorage.getItem('token'),
+          token:localStorage.getItem('token'),
           pagenumber: this.currentPage,
           pagesize: this.pageSize,
           search: this.keyword
 
         });
         console.log('后端返回：' + response.data.data.current)
-        console.log(response.data.data.projects)
+        console.log("device",response.data.data.records)
         this.equipments = response.data.data.records;
 
         this.currentPage = response.data.data.current;
@@ -428,6 +445,7 @@ export default {
       console.log(this.keyword)
       this.currentPage = 1
       this.getEquipments()
+
     },
     handlePageChange(newPage) {
       this.currentPage = newPage;
@@ -460,40 +478,64 @@ export default {
 
     },
     async modifyEquipment(){
-      try {
-        const response =await  this.$http.post('/v1/device/updateDevice', {
-
-          token: localStorage.getItem('token'),
-          id: this.chosenEquipment.id,
-          number:this.chosenEquipment.number,
-          name:this.chosenEquipment.name,
-          type:this.chosenEquipment.type,
-          measuring_range:this.chosenEquipment.measuring_range,
-          buydate:this.chosenEquipment.buydate,
-          trace_method: this.chosenEquipment.trace_method,
-          effective_date:this.chosenEquipment.effective_date,
-          source:this.chosenEquipment.source,
-          certificate:this.chosenEquipment.certificate,
-          rules:this.chosenEquipment.rules,
-          people:this.chosenEquipment.people,
-        })
-        if (response.data.code === 200) {
-          this.$message.success("修改成功")
-        };
-      } catch (error) {
-        console.error('请求错误:', error);
+      let formData = new FormData();
+      //文件
+      if(this.cerLen!==0){
+        formData.append("certificate", this.form.certificate.raw, this.form.certificate.name);
       }
+      if(this.rulesLen!==0){
+        formData.append("rules", this.form.rules.raw, this.form.rules.name);
+      }
+      if(this.peopleLen!==0){
+        console.log("people存在")
+        formData.append("people", this.form.people.raw, this.form.people.name);
+      }
+      //字段
+      formData.append('id', this.chosenEquipment.id);
+      formData.append('token',localStorage.getItem('token'))
+      formData.append('number', this.chosenEquipment.number);
+      formData.append('name', this.chosenEquipment.name);
+      formData.append('type',this.chosenEquipment.type);
+      formData.append('measuring_range',this.chosenEquipment.measuring_range)
+      formData.append('buydate',this.chosenEquipment.buydate)
+      formData.append('trace_method', this.chosenEquipment.trace_method)
+      formData.append('effective_date',this.chosenEquipment.effective_date)
+      formData.append('source',this.chosenEquipment.source)
+      const http1 = axios.create({
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      http1({
+        url: '/v1/device/updateDevice',
+        method: 'post',
+        data: formData
+      })
+          .then((res) => {
+            console.log(res.data);
+            if (res.data.code === 200) {
+              this.$message.success("修改成功")
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+      await this.waitforme(100);
+      this.getEquipments()
+      this.cancel()
     },
     async deleteEquipment(id){
+      console.log('删除')
       try {
-        const response =await  this.$http.post('/v1/device/deleteDevice', {
+        const response =await this.$http.post('/v1/device/deleteDevice', {
 
           token: localStorage.getItem('token'),
           id: id
         })
         if (response.data.code === 200) {
           this.$message.success("删除成功")
-        };
+        }
       } catch (error) {
         console.error('请求错误:', error);
       }
@@ -502,10 +544,10 @@ export default {
     },
     async batchDelete(){
       try {
-        const response =await  this.$http.post('/v1/device/deleteBatchDevice', {
+        const response =await  this.$http.post('/v1/device/deletebatchDevice', {
 
           token: localStorage.getItem('token'),
-          idList:this.chosenIds
+          deviceidlist:this.chosenIds
         })
         if (response.data.code === 200) {
           this.$message.success("删除成功")
@@ -518,29 +560,72 @@ export default {
       this.chosenIds=[]
     },
     async addEquipment(){
-      try {
-        const response = await this.$http.post('/v1/device/addDevice', {
-
-          token: localStorage.getItem('token'),
-          number:this.form.number,
-          name:this.form.name,
-          type:this.form.type,
-          measuring_range:this.form.measuring_range,
-          buydate:this.form.buydate,
-          trace_method: this.form.trace_method,
-          effective_date:this.form.effective_date,
-          source:this.form.source,
-          certificate:this.form.certificate,
-          rules:this.form.rules,
-          people:this.form.people,
-        });
-        console.log('后端返回：' + response.data.data)
-      } catch (error) {
-        console.error('请求错误:', error);
+        let formData = new FormData();
+        console.log("cerFileList.length=",this.cerLen)
+      console.log("rulesFileList.length=",this.rulesLen)
+      console.log("peopleFileList.length=",this.peopleLen)
+        //文件
+      if(this.cerLen!==0){
+        formData.append("certificate", this.form.certificate.raw, this.form.certificate.name);
       }
+      // else{
+      //   formData.append("certificate", null);
+      // }
+      if(this.rulesLen!==0){
+        formData.append("rules", this.form.rules.raw, this.form.rules.name);
+      }
+
+      if(this.peopleLen!==0){
+        formData.append("people", this.form.people.raw, this.form.people.name);
+      }
+
+        //字段localStorage.getItem('token')
+        formData.append('token',localStorage.getItem('token'))
+        formData.append('number', this.form.number);
+        formData.append('name', this.form.name);
+        formData.append('type',this.form.type);
+        formData.append('measuring_range',this.form.measuring_range)
+        formData.append('buydate',this.form.buydate)
+        formData.append('trace_method', this.form.trace_method)
+        formData.append('effective_date',this.form.effective_date)
+        formData.append('source',this.form.source)
+        const http1 = axios.create({
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        http1({
+          url: '/v1/device/addDevice',
+          method: 'post',
+          data: formData
+        })
+            .then((res) => {
+              console.log(res.data);
+              if (res.data.code === 200) {
+                this.$message.success("添加成功")
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+
+      await this.waitforme(100);
+      this.getEquipments()
+      this.cancel()
+    },
+    async download(id){
+      console.log("要下载",id)
+      window.open(axios.defaults.baseURL+'/v1/file/download/'+id)
+
     },
     cancel() {
       this.open = false;
+      this.cerLen=0
+      this.rulesLen=0
+      this.peopleLen=0
+      this.cerList=[]
+      this.rulesList=[]
+      this.peoList=[]
       this.form={
         number:'',
         name:'',
@@ -550,9 +635,9 @@ export default {
         trace_method: '',
         effective_date:'',
         source:'',
-        certificate:'',
-        rules:'',
-        people:''
+        certificate: null,
+        rules: null,
+        people:null,
       }
     },
     cancelModify(){

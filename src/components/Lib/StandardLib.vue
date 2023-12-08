@@ -174,27 +174,6 @@ export default {
     gotoEquipmentlib() {
       this.$router.push("/equipmentlib");
     },
-    async getStandards(){
-      try {
-        const response = await this.$http.post('/v1/project/listsearchPage', {
-
-          token: localStorage.getItem('token'),
-          pagenumber: this.currentPage,
-          pagesize: this.pageSize,
-          search: this.keyword
-
-        });
-        console.log('后端返回：' + response.data.data.current)
-        this.standards = response.data.data.records;
-
-        this.currentPage = response.data.data.current;
-        this.pageSize = response.data.data.size;
-        this.totalResults = response.data.data.total;
-        this.totalPages = response.data.data.pages;
-      } catch (error) {
-        console.error('请求错误:', error);
-      }
-    },
     onSearchClick() {
       console.log(this.keyword)
       this.currentPage = 1
@@ -230,7 +209,29 @@ export default {
       }
 
     },
+    async getStandards(){
+      try {
+        const response = await this.$http.post('/v1/standard/listSearchPage', {
+
+          token: localStorage.getItem('token'),
+          pagenumber: this.currentPage,
+          pagesize: this.pageSize,
+          search: this.keyword
+
+        });
+
+        this.standards = response.data.data.records;
+        console.log('后端返回：' +  this.standards )
+        this.currentPage = response.data.data.current;
+        this.pageSize = response.data.data.size;
+        this.totalResults = response.data.data.total;
+        this.totalPages = response.data.data.pages;
+      } catch (error) {
+        console.error('请求错误:', error);
+      }
+    },
     async modifyStandard(){
+      console.log("this.chosenStandard.bigCategory=",this.chosenStandard.bigCategory)
       try {
         const response =await  this.$http.post('/v1/standard/updateStandard', {
 
@@ -239,14 +240,17 @@ export default {
           number:this.chosenStandard.number,
           name:this.chosenStandard.name,
           bigCategory:this.chosenStandard.bigCategory,
-          Category:this.chosenEquipment.Category,
+          category:this.chosenStandard.category,
         })
+        console.log("response.data",response.data)
         if (response.data.code === 200) {
           this.$message.success("修改成功")
         }
       } catch (error) {
         console.error('请求错误:', error);
       }
+      await this.waitforme(100);
+      this.getStandards();
     },
     async deleteStandard(id){
       try {
@@ -262,14 +266,14 @@ export default {
         console.error('请求错误:', error);
       }
       await this.waitforme(100);
-      this.getEquipments();
+      this.getStandards();
     },
     async batchDelete(){
       try {
-        const response =await  this.$http.post('/v1/standard/deleteBatchStandard', {
+        const response =await  this.$http.post('/v1/standard/deletebatchStandard', {
 
           token: localStorage.getItem('token'),
-          idList:this.chosenIds
+          standardidlist:this.chosenIds
         })
         if (response.data.code === 200) {
           this.$message.success("删除成功")
@@ -282,6 +286,7 @@ export default {
       this.chosenIds=[]
     },
     async addStandard(){
+      console.log("addStandard")
       try {
         const response = await this.$http.post('/v1/standard/addStandard', {
 
@@ -289,12 +294,17 @@ export default {
           number:this.form.number,
           name:this.form.name,
           bigCategory:this.form.bigCategory,
-          Category:this.form.Category,
+          category:this.form.category,
         });
-        console.log('后端返回：' + response.data.data)
+        console.log('addStandard：' + response.data)
+        if (response.data.code === 200) {
+          this.$message.success("添加成功")
+        }
       } catch (error) {
         console.error('请求错误:', error);
       }
+      await this.waitforme(100);
+      this.getStandards();
     },
     cancel() {
       this.open = false;
@@ -352,4 +362,13 @@ export default {
   margin-top:5px;
 }
 
+.demo-table-expand label {
+  width: 130px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
 </style>
