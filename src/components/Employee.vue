@@ -53,11 +53,11 @@
 				<el-table-column label="人员权限">
 					<template slot-scope="scope">
 						<el-select v-model="scope.row.privilege" placeholder="请选择用户权限" @change="updatePrivilege(scope.row)">
-							<el-option label="超级管理员" value=0></el-option>
-							<el-option label="管理员" value=1></el-option>
+							<el-option label="超级管理员" value=4></el-option>
+							<el-option label="管理员" value=3></el-option>
 							<el-option label="技术员" value=2></el-option>
-							<el-option label="浏览者" value=3></el-option>
-							<el-option label="黑名单" value=4></el-option>
+							<el-option label="浏览者" value=1></el-option>
+							<el-option label="黑名单" value=0></el-option>
 						</el-select>
 					</template>
 				</el-table-column>
