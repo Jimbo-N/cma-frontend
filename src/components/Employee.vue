@@ -52,12 +52,12 @@
 				<el-table-column prop="realname" label="人员姓名"></el-table-column>
 				<el-table-column label="人员权限">
 					<template slot-scope="scope">
-						<el-select v-model="scope.row.privilege" placeholder="请选择用户权限" @change="updatePrivilege(scope.row)">
-							<el-option label="超级管理员" value=0></el-option>
-							<el-option label="管理员" value=1></el-option>
+						<el-select v-model="scope.row.privilege" placeholder="请选择用户权限" @change="updatePrivilege(scope.row)" :disabled="hasprivilege(4)">
+							<el-option label="超级管理员" value=4></el-option>
+							<el-option label="管理员" value=3></el-option>
 							<el-option label="技术员" value=2></el-option>
-							<el-option label="浏览者" value=3></el-option>
-							<el-option label="黑名单" value=4></el-option>
+							<el-option label="浏览者" value=1></el-option>
+							<el-option label="黑名单" value=0></el-option>
 						</el-select>
 					</template>
 				</el-table-column>
@@ -86,7 +86,6 @@
 
 <script>
 import NavBar from './NavBar.vue'
-
 export default {
 	components:{
 		NavBar
@@ -108,6 +107,7 @@ export default {
 	},
 
 	methods:{
+
 		gotoMain() {
 			this.$router.push("/projects");
 		},
@@ -163,11 +163,11 @@ export default {
 		},
 		convertPrivilegeToText(privilege) {
 			const privilegeMap = {
-				0: '超级管理员',
-				1: '管理员',
+				4: '超级管理员',
+				3: '管理员',
 				2: '技术员',
-				3: '浏览者',
-				4: '黑名单'
+				1: '浏览者',
+				0: '黑名单'
 			};
 			return privilegeMap[privilege] || '未知权限';
 		},
@@ -195,6 +195,31 @@ export default {
 			this.pageSize = newSize;
 			this.getEmployees();
 		},
+		hasprivilege(num)
+		{
+			this.getuserinfo()
+			var privilege=localStorage.getItem('privilege')
+			return !(privilege>=num)
+		},
+		async getuserinfo()
+      {
+        try {
+          const response = await this.$http.post('/v1/user/getuserinfo', {
+            token:localStorage.getItem('token')
+          })
+          if (response.data.code === 200) {
+            
+            localStorage.setItem('userid', response.data.data.id)
+            localStorage.setItem('realname', response.data.data.realname)
+            localStorage.setItem('privilege', response.data.data.privilege)
+          } else {
+            this.$message.error(response.data.msg)
+            console.log(response.data.msg)
+          }
+        } catch (error) {
+          this.$message.error('登录失败')
+        }
+      }
 	}
 }
 </script>
