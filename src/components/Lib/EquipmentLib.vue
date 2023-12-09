@@ -90,7 +90,7 @@
 
       <!--      添加设备对话框-->
       <el-dialog :title="tittle" :rules="rules" :visible.sync="open" width="700px" append-to-body>
-        <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+        <el-form ref="addForm" :model="form" :rules="rules" label-width="180px">
           <el-form-item label="仪器设备编号" prop="number">
             <el-input v-model="form.number" placeholder="请输入仪器设备编号" />
           </el-form-item>
@@ -181,7 +181,7 @@
 
       <!--      修改设备对话框-->
       <el-dialog :title="tittle2" :rules="rules" :visible.sync="openOfModify" width="700px" append-to-body>
-        <el-form ref="form" :model="chosenEquipment" :rules="rules" label-width="180px">
+        <el-form ref="modifyForm" :model="chosenEquipment" :rules="rules" label-width="180px">
           <el-form-item label="仪器设备编号" prop="number">
             <el-input v-model="chosenEquipment.number" placeholder="请输入仪器设备编号" />
           </el-form-item>
@@ -645,16 +645,30 @@ export default {
       this.chosenEquipment={}
     },
     async submitAddForm() {
-      this.addEquipment()
-      await this.waitforme(100);
-      this.getEquipments();
-      this.cancel()
+      this.$refs['addForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.addEquipment()
+          await this.waitforme(100);
+          this.getEquipments();
+          this.cancel()
+        } else {   //校验不通过
+          return false;
+        }
+      });
     },
     async submitModifyForm(){
-      this.modifyEquipment()
-      await this.waitforme(100);
-      this.getEquipments();
-      this.cancelModify()
+      this.$refs['modifyForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.modifyEquipment()
+          await this.waitforme(100);
+          this.getEquipments();
+          this.cancelModify()
+        } else {   //校验不通过
+          return false;
+        }
+      });
     }
   }
 }

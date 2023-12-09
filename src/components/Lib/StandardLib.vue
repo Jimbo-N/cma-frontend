@@ -65,7 +65,7 @@
 
       <!--      添加设备对话框-->
       <el-dialog :title="tittle" :rules="rules" :visible.sync="open" width="700px" append-to-body>
-        <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+        <el-form :model="form" :rules="rules" ref="addForm" label-width="180px">
           <el-form-item label="大类" prop="bigCategory">
             <el-input v-model="form.bigCategory" placeholder="请输入大类" />
           </el-form-item>
@@ -87,7 +87,7 @@
 
       <!--      修改设备对话框-->
       <el-dialog :title="tittle2" :rules="rules" :visible.sync="openOfModify" width="700px" append-to-body>
-        <el-form ref="form" :model="chosenStandard" :rules="rules" label-width="180px">
+        <el-form ref="modifyForm" :model="chosenStandard" :rules="rules" label-width="180px">
           <el-form-item label="大类" prop="bigCategory">
             <el-input v-model="chosenStandard.bigCategory" placeholder="请输入大类" />
           </el-form-item>
@@ -320,16 +320,31 @@ export default {
       this.chosenStandard={}
     },
     async submitAddForm() {
-      this.addStandard()
-      await this.waitforme(100);
-      this.getStandards();
-      this.cancel()
+      this.$refs['addForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.addStandard()
+          await this.waitforme(100);
+          this.getStandards();
+          this.cancel()
+        } else {   //校验不通过
+          return false;
+        }
+      });
+
     },
     async submitModifyForm(){
-      this.modifyStandard()
-      await this.waitforme(100);
-      this.getStandards();
-      this.cancelModify()
+      this.$refs['modifyForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.modifyStandard()
+          await this.waitforme(100);
+          this.getStandards();
+          this.cancelModify()
+        } else {   //校验不通过
+          return false;
+        }
+      });
     }
   }
 }
