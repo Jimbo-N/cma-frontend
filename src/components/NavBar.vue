@@ -4,11 +4,17 @@
         <el-col :span="2">
             <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
         </el-col>
-        <el-col :span="2" :offset="13">
-          <el-button type="text" @click="gotoEmp">人员信息</el-button>
+        <el-col :span="2" :offset="9">
+          <el-button type="text" @click="gotoMain">项目列表</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button type="text" @click="gotoStandardlib">&nbsp;&nbsp;标准库</el-button>
+          <el-button type="text" @click="gotoEmp">用户管理</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoPersonlib">人员库</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoStandardlib">标准库</el-button>
         </el-col>
         <el-col :span="2">
           <el-button type="text" @click="gotoEquipmentlib">设备库</el-button>
@@ -47,6 +53,10 @@
       gotoEquipmentlib() {
         this.$router.push("/equipmentlib");
       },
+      gotoPersonlib()
+      {
+        this.$router.push("/personlib");
+      }
     },
   };
   </script>

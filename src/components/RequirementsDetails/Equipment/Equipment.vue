@@ -6,36 +6,65 @@
       </div>
       <div class="myrouter">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="myrouter">
-          <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ name: 'subprojects', params: this.params }">产品/项目/参数</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ name: 'requirements', params: this.params }">要求</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'projects' }">项目列表</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'parameter' }">参数</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'requirements' }">要求</el-breadcrumb-item>
           <el-breadcrumb-item>设备详细</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <el-row class="nowpos">
-        <p>当前项目:<span>{{ this.projectid }}</span></p>
-        <p>当前标准:<span>{{ this.standardid }}</span></p>
-        <P>当前参数:<span>{{ this.subpid }}</span></P>
-        <p>当前位置:<span>设备详细</span></p>
+
+      <!-- 面包屑 --------------------------------------------------------------------->
+
+      <el-row style="width: 80%;height: 60px;padding-top: 20px;">
+        <el-col :span="6">当前项目:{{ this.projectid }}</el-col>
+        <el-col :span="6">当前标准:{{ this.standarditemid }}</el-col>
+        <el-col :span="6">当前参数:{{ this.parameterid }}</el-col>
+        <el-col :span="6">当前位置:设备详细</el-col>
       </el-row>
+
+
       <el-row class="modifybtn">
         <el-button type="warning" @click="showModify = true">编辑设备</el-button>
+        <el-col :span="5">
+          <el-select v-model="searchState" placeholder="所有状态">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-input placeholder="请输入搜索关键词" v-model="searchKeyword" clearable prefix-icon="el-icon-search"
+            @clear="getDevice" @keyup.enter.native="getDevice">
+          </el-input>
+        </el-col>
+        <el-col>
+          <el-button @click="getDevice">搜索</el-button>
+        </el-col>
+
       </el-row>
+      <!-- tool --------------------------------------------------------------------->
+
+
       <el-row class="cont" type="flex" justify="center" style="width: 100%;">
         <el-col :span="20">
-          <el-table stripe :data="devices">
-            
-            <el-table-column prop="serialNumber" label="序号"></el-table-column>
+          <el-table stripe :data="records" :cell-style="{ 'text-align': 'center' }"
+            :header-cell-style="{ 'text-align': 'center' }">
             <el-table-column prop="number" label="设备编号"></el-table-column>
             <el-table-column prop="name" label="设备名称"></el-table-column>
-            <el-table-column prop="status" label="状态"></el-table-column>
-            <el-table-column>
+            <el-table-column prop="type" label="型号/规格/等级"></el-table-column>
+            <el-table-column prop="measuring_range" label="测量范围"></el-table-column>
+            <el-table-column prop="stateCon stateNum" label="状态">
+              <template slot-scope="scope">
+                <div :style="{ color: scope.row.stateNum ? 'black' : 'red' }">
+                  {{ scope.row.stateCon }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click="">查看</el-button>
               </template>
             </el-table-column>
-
           </el-table>
         </el-col>
       </el-row>
@@ -43,18 +72,24 @@
         :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 15, 30]"
         layout="sizes, total,prev, pager, next" :total="totalResults">
       </el-pagination>
+      <el-button @click="debug">debug</el-button>
 
     </el-main>
 
 
     <el-dialog title="编辑设备" :visible.sync="showModify" width="60%" :before-close="processModify">
       <el-container slot="footer" class="diagFoot">
-        <el-transfer class="my-transfer" filterable :filter-method="filterMethod" filter-placeholder="搜素设备"
-          :titles="['设备库', '已选设备']" v-model="value" :buttonposition="right" :data="data">
+        <table-transfer filterable :filter-method="filterMethod" filter-placeholder="搜素设备" row-key="id"
+          :titles="['设备库', '已选设备']" v-model="value" :data="data">
+          <template>
 
-        </el-transfer>
+            <el-table-column label="编号" prop="number"></el-table-column>
+            <el-table-column label="名称" prop="name"></el-table-column>
+            <el-table-column label="型号" prop="type"></el-table-column>
+          </template>
+        </table-transfer>
         <el-row>
-          <el-button class="savebtn" @click="saveDevice()">保存设置</el-button>
+          <el-button type="primary" class="savebtn" @click="saveDevice()">保存设置</el-button>
         </el-row>
       </el-container>
 
@@ -67,39 +102,49 @@
 
     </el-dialog>
 
-
-
   </el-container>
 </template>
 
 
 <script>
-import NavBar from '@/components/NavBar.vue';
+import NavBar from '@/components/NavBar.vue'
+import TableTransfer from '@/components/TableTransfer/index.vue'
 export default {
   components: {
-    NavBar
+    NavBar,
+    TableTransfer
   },
   data() {
 
-
-
     return {
-      projectid: this.$route.params.projectid,
-      standardid: this.$route.params.standardid,
-      subpid: this.$route.params.subpid,
+      projectid: null,
+      standarditemid: null,
+      parameterid: null,
       showModify: false,
       modifySaved: true,
       showConfirm: false,
-      devices: [],
+      records: [],
       data: [],
       value: [],              //获取后端数据
-      filterMethod(query, item) {
-        return item.pinyin.indexOf(query) > -1;
-      }
 
-      ,currentPage:1
-      ,pageSize:10
-      ,totalResults:2
+
+      options: [{
+        value: '0',
+        label: '所有状态'
+      }, {
+        value: '1',
+        label: '未完成'
+      }, {
+        value: '2',
+        label: '已完成'
+      }]
+
+      , currentPage: 1
+      , pageSize: 10
+      , totalResults: 2
+      , totalPages: 0
+      , searchKeyword: ""
+      , searchState: ""
 
 
 
@@ -146,46 +191,52 @@ export default {
       this.showConfirm = false;
       this.showModify = false;
     }
-
-    ,async getDevice(){
-      try{
-        const resp = await this.$http.post('/v1/equipment/getDevice',{
+    , filterMethod(query, item) {
+      if (query != this.searchKeyword) {
+        this.searchKeyword = query;
+        this.getDevice();
+      }
+      console.log(item)
+      if(item==null)
+      item=[]
+      return item;
+    }
+    , async getDevice() {
+      try {
+        const resp = await this.$http.post('/v1/device/listSearchPage', {
           token: localStorage.getItem('token'),
-          pageNumber: this.currentPage,
-          pageSize: this.pageSize
+          search: this.searchKeyword,
+          pagenumber: this.currentPage,
+          pagesize: this.pageSize
         });
+        this.data = resp.data.data.records;
+        this.totalResults = resp.data.data.total;
+        this.currentPage = resp.data.data.current;
+        this.pageSize = resp.data.data.size;
+        this.totalPages = resp.data.data.pages;
 
-        this.pageNumber = resp.data.data.pageNumber;
-        this.pageSize = resp.data.data.pageSize;
-        this.devices = resp.data.data.devices;
-        this.totalResults = resp.data.data.totalResults;
+
         // alert(resp);
-        console.log(resp);
+        
 
       }
-      catch(e){
-        alert("fail to get device");
+      catch (e) {
+        // alert("fail to get device");
+        alert(e);
       }
     }
-    ,handlePageChange(page){
+    , handlePageChange(page) {
       this.currentPage = page;
       this.getDevice();
     }
-    ,handleSizeChange(size){
+    , handleSizeChange(size) {
       this.pageSize = size;
       this.getDevice();
     }
-    ,generateData(){
-      const data = [];
-      this.devices.forEach((number, index) => {
-        data.push({
-          label: number,
-          key: index,
-          pinyin: number
-        });
-      });
-      this.data = data
+    , debug() {
+      alert(this.searchState);
     }
+
 
 
   }
@@ -195,31 +246,15 @@ export default {
     }
   }
   , created() {
+    this.projectid = localStorage.getItem('projectid');
+    this.standarditemid = localStorage.getItem('standarditemid');
+    this.parameterid = localStorage.getItem('parameterid');
     this.getDevice();
-    this.generateData();
-    //   alert(123);
-    if (this.projectid != null) {
-      localStorage.setItem('projectid', JSON.stringify(this.projectid));
-    }
-    if (this.standardid != null) {
-      localStorage.setItem('standardid', JSON.stringify(this.standardid));
-    }
-    if (this.subpid != null) {
-      localStorage.setItem('subpid', JSON.stringify(this.subpid));
-    }
 
-    const savedprojectid = localStorage.getItem('projectid');
-    const savedstandardid = localStorage.getItem('standardid');
-    const savedsubpid = localStorage.getItem('subpid');
-    if (savedprojectid) {
-      this.projectid = JSON.parse(savedprojectid);
-    }
-    if (savedstandardid) {
-      this.standardid = JSON.parse(savedstandardid);
-    }
-    if (savedsubpid) {
-      this.subpid = JSON.parse(savedsubpid);
-    }
+    //   alert(123);
+
+
+
   }
 }
 

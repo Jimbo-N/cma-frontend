@@ -10,16 +10,11 @@
         <el-breadcrumb-item>模拟实验</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="search">
-      <el-input
-        placeholder="请输入搜索关键词"
-        v-model="keyword"
-        clearable
-        prefix-icon="el-icon-search"
-        @clear="onSearchClick"
-        @keyup.enter.native="onSearchClick"
-      ></el-input>
+        <el-input placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search" @clear="onSearchClick"
+            @keyup.enter.native="onSearchClick" @input="onSearchClick">
+          </el-input>
       </div>
-      <el-table stripe :data="filteredData">
+      <el-table stripe :data="moni">
         <el-table-column prop="id" label="序号"></el-table-column>
         <el-table-column prop="name" label="要求名称"></el-table-column>
         <el-table-column prop="status" label="状态"></el-table-column>
@@ -48,48 +43,73 @@ export default {
   components: {
     NavBar,
   },
-  setup() {
-    const state = reactive({
+  data() {
+  return {
+      moni: [],
       keyword: '',
-      tableData: [
-        { id: 1, name: '模拟实验报告', status: '完成' },
-        { id: 2, name: '原始记录', status: '进行中' },
-      ],
-      
-    });
-
-    const filteredData = computed(() => {
-      if (!state.keyword) {
-        return state.tableData;
-      }
-      return state.tableData.filter((data) =>
-        data.name.toLowerCase().includes(state.keyword.toLowerCase())
-      );
-    });
-
-    function onSearchClick() {
-      // 搜索逻辑可以在这里实现，目前通过computed属性自动处理过滤
-    }
-
-    function onUploadSuccess(response, file, fileList) {
-      console.log('上传成功', response, file, fileList);
-    }
-
-    function beforeUpload(file) {
-      console.log('上传文件', file);
-      // 这里可以添加一些上传前的验证逻辑
-      return true;
-    }
-
-    return {
       ...toRefs(state),
       onSearchClick,
       onUploadSuccess,
       beforeUpload,
       filteredData,
     };
-
   },
+  created() {
+    this.fetchMoni();
+  },
+  // setup() {
+  //   const state = reactive({
+  //     keyword: '',
+  //     tableData: [
+  //       { id: 1, name: '样品信息一览表', status: '完成' },
+  //       { id: 2, name: '样品照片', status: '进行中' },
+  //     ],
+      
+  //   });
+
+  //   const filteredData = computed(() => {
+  //     if (!state.keyword) {
+  //       return state.tableData;
+  //     }
+  //     return state.tableData.filter((data) =>
+  //       data.name.toLowerCase().includes(state.keyword.toLowerCase())
+  //     );
+  //   });
+  // },
+    methods: {
+      async fetchMoni() {
+      try {
+        const response = await this.$http.post('/v1/parameter/updateParameter', {
+          token: localStorage.getItem('token'),
+        });
+        
+        console.log(response.data.data.moni)
+        this.moni = response.data.data.records;
+        this.status = response.data.data.status;
+      } catch (error) {
+        console.error('请求错误:', error);
+      }
+    },
+    onSearchClick() {
+      console.log(this.keyword)
+      this.currentPage = 1
+      this.fetchMoni()
+    },
+     onUploadSuccess(response, row) {
+      console.log('上传成功', response, row);
+      // 在这里更新数据模型，将上传的文件添加到当前行的文件列表中
+      if (!row.files) {
+        row.files = [];
+      }
+      row.files.push({ name: response.name, url: response.url });
+    },
+
+     beforeUpload(file, row) {
+      console.log('上传文件', file);
+      // 这里可以添加一些上传前的验证逻辑
+      return true;
+    },
+ }
 };
 </script>
 

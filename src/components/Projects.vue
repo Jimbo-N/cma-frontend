@@ -1,6 +1,34 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
+    <el-header class="header">
+      <el-row :gutter="15">
+        <el-col :span="2">
+            <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
+        </el-col>
+        <el-col :span="2" :offset="9">
+          <el-button type="primary" @click="gotoMain">项目列表</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoEmp">用户管理</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoPersonlib">人员库</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoStandardlib">标准库</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoEquipmentlib">设备库</el-button>
+        </el-col>
+        <el-col :span="3" class="user-display">
+          <el-avatar icon="el-icon-user-solid"></el-avatar>
+            <div class="user-info">
+              <p class="user-id">{{ userid }}</p>
+              <p class="user-name">{{ realname }}</p>
+            </div>
+        </el-col>
+      </el-row>
+    </el-header>
     <el-main>
       <el-row :gutter="20" class="main-header">
         <el-col :span="4">
@@ -17,14 +45,15 @@
       </el-row>
 
       <el-table stripe :data="projects">
-        <el-table-column prop="name" label="项目名称"></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
-        <el-table-column prop="createUser.realname" label="创建人"></el-table-column>
-        <el-table-column prop="createTime" label="创建日期"></el-table-column>
-        <el-table-column>
+        <el-table-column prop="name" label="项目名称" align="center"></el-table-column>
+        <el-table-column prop="status" label="状态" align="center"></el-table-column>
+        <el-table-column prop="createUser.realname" label="创建人" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="创建日期" align="center"></el-table-column>
+        <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click="gotoDetails(scope.row.id)">查看</el-button>
-            <el-button type="danger" @click="deleteproject(scope.row.id)">删除</el-button>
+            <el-button type="text" icon="el-icon-view" @click="gotoDetails(scope.row.id)">查看</el-button>
+            <el-button type="text" icon="el-icon-delete" @click="deleteproject(scope.row.id)">删除</el-button>
+            <el-button type="text" icon="el-icon-download" @click="generateTables(scope.row.id)">生成表格</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -50,18 +79,37 @@
         <el-button @click="cancel">取消</el-button>
       </div>
     </el-dialog>
+<!--    生成表格对话框-->
+    <el-dialog :title="title2" :visible.sync="open2" width="600px" append-to-body>
+        <el-row type="flex" align="middle" style="width: 100%">
+          <el-col :span="6" style="font-size: 15px;" >仪器设备信息表：</el-col>
+          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table3" @click="download(table3.id)">{{ table3.filename }}</el-button></el-col>
+        </el-row>
+        <el-row type="flex" align="middle">
+          <el-col :span="7" style="font-size: 15px;">检验检测能力申请表:</el-col>
+          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table4"  @click="download(table4.id)">{{ table4.filename }}</el-button></el-col>
+        </el-row>
+        <el-row type="flex" align="middle" >
+          <el-col :span="9" style="font-size: 15px;">仪器设备(标准物质)配置表：</el-col>
+          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table5"  @click="download(table5.id)">{{ table5.filename }}</el-button></el-col>
+        </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeGenerate" type="primary">关闭</el-button>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
   
 <script>
-import NavBar from './NavBar.vue';
+
+import axios from "axios";
+
 export default {
   components:{
-    NavBar
   },
   data() {
     return {
-      username: localStorage.getItem('realname'),
+      realname: localStorage.getItem('realname'),
       userid: localStorage.getItem('userid'),
       projects: [],
       totalPages: 0,
@@ -71,6 +119,8 @@ export default {
       keyword: '',
       open: false,
       title: "创建新项目",
+      title2: "生成表格",
+      open2:false,
       form: {
         name: '',
         reason: ''
@@ -83,16 +133,40 @@ export default {
           { required: true, message: "立项依据不能为空", trigger: "blur" },
           { min: 3, max: 1000, message: '长度在 3 到 1000 个字符', trigger: 'blur' }
         ],
-      }
+      },
+      table3:{},
+      table4:{},
+      table5:{}
     };
   },
   created() {
     this.fetchProjects();
   },
   methods: {
+    gotoMain() {
+        if (this.$route.path !== "/projects") {
+          this.$router.push("/projects");
+        }
+      },
+      gotoEmp() {
+        this.$router.push("/employee");
+      },
+      gotoStandardlib() {
+        this.$router.push("/standardlib");
+      },
+      gotoEquipmentlib() {
+        this.$router.push("/equipmentlib");
+      },
+      gotoPersonlib()
+      {
+        this.$router.push("/personlib");
+      },
     cancel() {
       this.open = false;
       this.reset();
+    },
+    closeGenerate(){
+      this.open2=false
     },
     reset() {
       this.form = {
@@ -129,7 +203,10 @@ export default {
         })
         if (response.data.code === 200) {
           this.$message.success("添加成功")
-        };
+        }
+        else{
+          this.$message.error(response.data.message)
+        }
       } catch (error) {
         console.error('请求错误:', error);
       }
@@ -182,13 +259,45 @@ export default {
         console.error('请求错误:', error);
       }
     },
+    async generateTables(id){
+      this.table3={}
+      this.table4={}
+      this.table5={}
+      try {
+        const response =await this.$http.post('/v1/project/generateexcel', {
+
+          token: localStorage.getItem('token'),
+          id: id
+        })
+        if (response.data.code === 200) {
+          const fileList = response.data.data.fileList
+          this.table3=fileList[0]
+          this.table4=fileList[1]
+          this.table5=fileList[2]
+          this.title2="生成成功"
+          this.open2=true
+        }else{
+          this.title2="生成失败"
+          this.open2=true
+        }
+
+      } catch (error) {
+        console.error('请求错误:', error);
+      }
+    },
+    async download(id){
+      console.log("要下载",id)
+      window.open(axios.defaults.baseURL+'/v1/file/download/'+id)
+
+    },
     handlePageChange(newPage) {
       this.currentPage = newPage;
       this.fetchProjects();
     },
     gotoDetails(id) {
       console.log(id)
-      this.$router.push({ name: 'standard', params: { projectid:id } });    
+      localStorage.setItem("projectid",id)
+      this.$router.push({ name: 'standard'});    
     },
     onSearchClick() {
       console.log(this.keyword)

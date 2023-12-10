@@ -7,11 +7,17 @@
         <el-col :span="2">
             <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
         </el-col>
-        <el-col :span="2" :offset="13">
-          <el-button type="primary" size="small" @click="gotoEmp">人员信息</el-button>
+        <el-col :span="2" :offset="9">
+          <el-button type="text" @click="gotoMain">项目列表</el-button>
+        </el-col>
+        <el-col :span="2" :hidden="!hasprivilege(4)">
+          <el-button type="primary" @click="gotoEmp">用户管理</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button type="text" @click="gotoStandardlib">&nbsp;&nbsp;标准库</el-button>
+          <el-button type="text" @click="gotoPersonlib">人员库</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="text" @click="gotoStandardlib">标准库</el-button>
         </el-col>
         <el-col :span="2">
           <el-button type="text" @click="gotoEquipmentlib">设备库</el-button>
@@ -20,7 +26,7 @@
           <el-avatar icon="el-icon-user-solid"></el-avatar>
             <div class="user-info">
               <p class="user-id">{{ userid }}</p>
-              <p class="user-name">{{ username }}</p>
+              <p class="user-name">{{ realname }}</p>
             </div>
         </el-col>
       </el-row>
@@ -52,7 +58,7 @@
 				<el-table-column prop="realname" label="人员姓名"></el-table-column>
 				<el-table-column label="人员权限">
 					<template slot-scope="scope">
-						<el-select v-model="scope.row.privilege" placeholder="请选择用户权限" @change="updatePrivilege(scope.row)" :disabled="hasprivilege(4)">
+						<el-select v-model="scope.row.privilege" placeholder="请选择用户权限" @change="updatePrivilege(scope.row)" :disabled="!hasprivilege(4)">
 							<el-option label="超级管理员" value=4></el-option>
 							<el-option label="管理员" value=3></el-option>
 							<el-option label="技术员" value=2></el-option>
@@ -92,7 +98,7 @@ export default {
 	},
 	data(){
 		return{
-			username: localStorage.getItem('username'),
+			realname: localStorage.getItem('realname'),
 			userid: localStorage.getItem('userid'),
 			keyword: '',
 			employees: [],
@@ -120,6 +126,10 @@ export default {
     gotoEquipmentlib() {
       this.$router.push("/equipmentlib");
     },
+	gotoPersonlib()
+      {
+        this.$router.push("/personlib");
+      },
 		// 获取人员信息，未修改
 		async getEmployees(){
 			try {
@@ -199,7 +209,7 @@ export default {
 		{
 			this.getuserinfo()
 			var privilege=localStorage.getItem('privilege')
-			return !(privilege>=num)
+			return privilege>=num
 		},
 		async getuserinfo()
       {
@@ -215,6 +225,7 @@ export default {
           } else {
             this.$message.error(response.data.msg)
             console.log(response.data.msg)
+			this.$route.push("/login")
           }
         } catch (error) {
           this.$message.error('登录失败')
