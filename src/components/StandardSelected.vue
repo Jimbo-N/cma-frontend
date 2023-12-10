@@ -28,9 +28,8 @@
         <el-table-column prop="status" label="完成状态"></el-table-column>
         <el-table-column>
             <template slot-scope="scope">
-            <el-button @click="gotoparameter(scope.row.id)">查看</el-button>
-            <el-button type="danger" @click="deletestandardItem(scope.row.id)">删除</el-button>
-            
+            <el-button type="text" icon="el-icon-view" @click="gotoparameter(scope.row.id)">查看</el-button>
+            <el-button type="text" icon="el-icon-delete" @click="deletestandardItem(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
 

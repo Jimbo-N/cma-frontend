@@ -5,7 +5,7 @@
             <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
         </el-col>
         <el-col :span="2" :offset="9">
-          <el-button type="text" @click="gotoMain">项目列表</el-button>
+          <el-button :type="$route.path === '/projects' ? 'primary' : 'text'" @click="gotoMain">项目列表</el-button>
         </el-col>
         <el-col :span="2">
           <el-button :type="$route.path === '/employee' ? 'primary' : 'text'" @click="gotoEmp" :hidden="!hasprivilege(4)">用户管理</el-button>
