@@ -1,28 +1,6 @@
 <template>
   <el-container>
-    <el-header class="header">
-      <el-row :gutter="15">
-        <el-col :span="2">
-          <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
-        </el-col>
-        <el-col :span="2" :offset="13">
-          <el-button type="text" @click="gotoEmp">人员信息</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="primary" size="small" @click="gotoStandardlib">标准库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" size="small" @click="gotoEquipmentlib">设备库</el-button>
-        </el-col>
-        <el-col :span="3" class="user-display">
-          <el-avatar icon="el-icon-user-solid"></el-avatar>
-          <div class="user-info">
-            <p class="user-id">{{ userid }}</p>
-            <p class="user-name">{{ username }}</p>
-          </div>
-        </el-col>
-      </el-row>
-    </el-header>
+    <NavBar></NavBar>
     <el-main>
       <el-row :gutter="20" class="main-header" type="flex" align="middle">
         <el-col :span="4">

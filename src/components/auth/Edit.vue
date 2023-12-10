@@ -4,16 +4,13 @@
       <div class="logo-container">
         <img src="@/assets/logo.png" alt="Logo" class="logo">
       </div>
-      <h1 class="login-title">欢迎注册</h1>
+      <!-- <h1 class="login-title"></h1> -->
       <el-form ref="registerForm" @submit.native.prevent="handleRegister" class="login-form" :model="form" :rules="rules">        
-        <el-form-item prop="userid">
-        <el-input v-model="form.userid" prefix-icon="el-icon-user" placeholder="工号"></el-input>
-        </el-form-item>
-        <el-form-item prop="username">
-          <el-input v-model="form.realname" prefix-icon="el-icon-user" placeholder="真实姓名"></el-input>
-        </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" v-model="form.password" prefix-icon="el-icon-lock" placeholder="密码"></el-input>
+          <el-input type="password" v-model="form.password" prefix-icon="el-icon-lock" placeholder="原始密码"></el-input>
+        </el-form-item>
+        <el-form-item prop="newpassword">
+          <el-input type="password" v-model="form.newpassword" prefix-icon="el-icon-lock" placeholder="新密码"></el-input>
         </el-form-item>
         <el-form-item prop="confirmPassword">
           <el-input type="password" v-model="form.confirmPassword" prefix-icon="el-icon-lock" placeholder="确认密码"></el-input>
@@ -48,28 +45,17 @@ export default {
   data() {
     return {
       form: {
-      userid: '',
-      realname: '',
       password: '',
+      newpassword: '',
       confirmPassword: '',
       captchaInput: ''
     },
     rules: {
-        userid: [
-          { required: true, message: '工号不能为空', trigger: 'blur' },
-          { validator: (rule, value, callback) => {
-              if (!/^\d{3}$/.test(value)) {
-                  callback(new Error('工号长度为3位数'));
-              } else {
-                  callback();
-              }
-            }, trigger: 'blur'
-          }
-        ],
-        realname: [
-          { required: true, message: '真实姓名不能为空', trigger: 'blur' }
-        ],
         password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 8, max: 16, message: '密码长度必须在8-16个字符', trigger: 'blur' }
+        ],
+        newpassword: [
           { required: true, message: '密码不能为空', trigger: 'blur' },
           { min: 8, max: 16, message: '密码长度必须在8-16个字符', trigger: 'blur' }
         ],
@@ -97,15 +83,16 @@ export default {
           this.$message.error('验证码错误');
           return;
         }
-        if (this.form.password !== this.identifyCode.confirmPassword) {
+        if (this.form.newpassword !== this.form.confirmPassword) {
           this.$message.error('两次输入的密码不同');
           return;
         }
+
         try {
-          const response = await this.$http.post('/v1/user/register', {
-            userid: this.form.userid,
-            password: this.form.password,
-            realname: this.form.realname,
+          const response = await this.$http.post('/v1/user/edit', {
+            token: localStorage.getItem('token'),
+            password: this.form.password,//原始密码
+            newpassword: this.form.newpassword
           });
 
           if (response.data.code === 200) {

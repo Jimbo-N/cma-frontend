@@ -1,30 +1,7 @@
 <template>
 	<el-container>
-		<!-- <NavBar></NavBar> -->
-		<!-- 做一个表示选中状态的BAR -->
-		<el-header class="header">
-      <el-row :gutter="15">
-        <el-col :span="2">
-            <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
-        </el-col>
-        <el-col :span="2" :offset="13">
-          <el-button type="primary" size="small" @click="gotoEmp">人员信息</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoStandardlib">&nbsp;&nbsp;标准库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoEquipmentlib">设备库</el-button>
-        </el-col>
-        <el-col :span="3" class="user-display">
-          <el-avatar icon="el-icon-user-solid"></el-avatar>
-            <div class="user-info">
-              <p class="user-id">{{ userid }}</p>
-              <p class="user-name">{{ username }}</p>
-            </div>
-        </el-col>
-      </el-row>
-    </el-header>
+		<NavBar></NavBar>
+
 		
 		<!-- 表格主体 -->
 		<el-main>
@@ -107,19 +84,6 @@ export default {
 	},
 
 	methods:{
-
-		gotoMain() {
-			this.$router.push("/projects");
-		},
-		gotoEmp() {
-      this.$router.push("/employee");
-    },
-    gotoStandardlib() {
-      this.$router.push("/standardlib");
-    },
-    gotoEquipmentlib() {
-      this.$router.push("/equipmentlib");
-    },
 		// 获取人员信息，未修改
 		async getEmployees(){
 			try {
