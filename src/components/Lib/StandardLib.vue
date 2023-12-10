@@ -1,34 +1,6 @@
 <template>
   <el-container>
-    <el-header class="header">
-      <el-row :gutter="15">
-        <el-col :span="2">
-          <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain">
-        </el-col>
-        <el-col :span="2" :offset="9">
-          <el-button type="text" @click="gotoMain">项目列表</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoEmp">用户管理</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoPersonlib">人员库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="primary" @click="gotoStandardlib">标准库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoEquipmentlib">设备库</el-button>
-        </el-col>
-        <el-col :span="3" class="user-display">
-          <el-avatar icon="el-icon-user-solid"></el-avatar>
-          <div class="user-info">
-            <p class="user-id">{{ userid }}</p>
-            <p class="user-name">{{ realname }}</p>
-          </div>
-        </el-col>
-      </el-row>
-    </el-header>
+    <NavBar></NavBar>
     <el-main>
       <el-row :gutter="20" class="main-header" type="flex" align="middle">
         <el-col :span="4">
@@ -72,7 +44,7 @@
 
       <!--      添加设备对话框-->
       <el-dialog :title="tittle" :rules="rules" :visible.sync="open" width="700px" append-to-body>
-        <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+        <el-form :model="form" :rules="rules" ref="addForm" label-width="180px">
           <el-form-item label="大类" prop="bigCategory">
             <el-input v-model="form.bigCategory" placeholder="请输入大类" />
           </el-form-item>
@@ -94,7 +66,7 @@
 
       <!--      修改设备对话框-->
       <el-dialog :title="tittle2" :rules="rules" :visible.sync="openOfModify" width="700px" append-to-body>
-        <el-form ref="form" :model="chosenStandard" :rules="rules" label-width="180px">
+        <el-form ref="modifyForm" :model="chosenStandard" :rules="rules" label-width="180px">
           <el-form-item label="大类" prop="bigCategory">
             <el-input v-model="chosenStandard.bigCategory" placeholder="请输入大类" />
           </el-form-item>
@@ -330,16 +302,31 @@ export default {
       this.chosenStandard = {}
     },
     async submitAddForm() {
-      this.addStandard()
-      await this.waitforme(100);
-      this.getStandards();
-      this.cancel()
+      this.$refs['addForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.addStandard()
+          await this.waitforme(100);
+          this.getStandards();
+          this.cancel()
+        } else {   //校验不通过
+          return false;
+        }
+      });
+
     },
-    async submitModifyForm() {
-      this.modifyStandard()
-      await this.waitforme(100);
-      this.getStandards();
-      this.cancelModify()
+    async submitModifyForm(){
+      this.$refs['modifyForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.modifyStandard()
+          await this.waitforme(100);
+          this.getStandards();
+          this.cancelModify()
+        } else {   //校验不通过
+          return false;
+        }
+      });
     }
   }
 }

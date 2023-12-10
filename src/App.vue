@@ -34,4 +34,7 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+.el-breadcrumb{
+  margin-bottom: 20px;
+}
 </style>

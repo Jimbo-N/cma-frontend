@@ -3,6 +3,8 @@ import VueRouter from 'vue-router';
 
 import Login from '@/components/auth/Login.vue'
 import Register from '@/components/auth/Register.vue'
+import Edit from '@/components/auth/Edit.vue'
+
 import Projects from '@/components/Projects.vue'
 import StandardSelected from '@/components/StandardSelected'
 import Parameter from '@/components/Parameter.vue'
@@ -33,6 +35,8 @@ const routes = [
   { path: '/', redirect:"/login" },
   { path: '/login', component: Login, name: 'login' },  
   { path: '/register', component: Register, name: 'register' },  
+  { path: '/edit', component: Edit, name:'edit'},
+
   { path: '/projects', component: Projects, name: 'projects' },  
   { path: '/standard', component:StandardSelected, name: 'standard' },  
   { path: '/parameter', component: Parameter, name: 'parameter' },  

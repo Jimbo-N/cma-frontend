@@ -1,34 +1,6 @@
 <template>
   <el-container>
-    <el-header class="header">
-      <el-row :gutter="15">
-        <el-col :span="2">
-          <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain">
-        </el-col>
-        <el-col :span="2" :offset="9">
-          <el-button type="text" @click="gotoMain">项目列表</el-button>
-        </el-col>
-        <el-col :span="2" :hidden="!hasprivilege(4)">
-          <el-button type="text" @click="gotoEmp">用户管理</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoPersonlib">人员库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="text" @click="gotoStandardlib">标准库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="primary" @click="gotoEquipmentlib">设备库</el-button>
-        </el-col>
-        <el-col :span="3" class="user-display">
-          <el-avatar icon="el-icon-user-solid"></el-avatar>
-          <div class="user-info">
-            <p class="user-id">{{ userid }}</p>
-            <p class="user-name">{{ realname }}</p>
-          </div>
-        </el-col>
-      </el-row>
-    </el-header>
+    <NavBar></NavBar>
     <el-main>
       <el-row :gutter="20" class="main-header" type="flex" align="middle">
         <el-col :span="4">
@@ -100,7 +72,7 @@
 
       <!--      添加设备对话框-->
       <el-dialog :title="tittle" :rules="rules" :visible.sync="open" width="700px" append-to-body>
-        <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+        <el-form ref="addForm" :model="form" :rules="rules" label-width="180px">
           <el-form-item label="仪器设备编号" prop="number">
             <el-input v-model="form.number" placeholder="请输入仪器设备编号" />
           </el-form-item>
@@ -164,7 +136,7 @@
 
       <!--      修改设备对话框-->
       <el-dialog :title="tittle2" :rules="rules" :visible.sync="openOfModify" width="700px" append-to-body>
-        <el-form ref="form" :model="chosenEquipment" :rules="rules" label-width="180px">
+        <el-form ref="modifyForm" :model="chosenEquipment" :rules="rules" label-width="180px">
           <el-form-item label="仪器设备编号" prop="number">
             <el-input v-model="chosenEquipment.number" placeholder="请输入仪器设备编号" />
           </el-form-item>
@@ -326,44 +298,7 @@ export default {
   created() {
     this.getEquipments()
   },
-  methods: {
-    hasprivilege(num) {
-      this.getuserinfo()
-      var privilege = localStorage.getItem('privilege')
-      return privilege >= num
-    },
-    async getuserinfo() {
-      try {
-        const response = await this.$http.post('/v1/user/getuserinfo', {
-          token: localStorage.getItem('token')
-        })
-        if (response.data.code === 200) {
-
-          localStorage.setItem('userid', response.data.data.id)
-          localStorage.setItem('realname', response.data.data.realname)
-          localStorage.setItem('privilege', response.data.data.privilege)
-        } else {
-          this.$message.error(response.data.msg)
-          console.log(response.data.msg)
-          this.$route.push("/login")
-        }
-      } catch (error) {
-        this.$message.error('登录失败')
-      }
-    },
-
-    gotoMain() {
-      this.$router.push("/projects");
-    },
-    gotoEmp() {
-      this.$router.push("/employee");
-    },
-    gotoStandardlib() {
-      this.$router.push("/standardlib");
-    },
-    gotoEquipmentlib() {
-      this.$router.push("/equipmentlib");
-    },
+  methods:{
     handleRemoveCertificate(file, fileList) {
       console.log(file, fileList);
       this.form.certificate = {}
@@ -626,16 +561,30 @@ export default {
       this.chosenEquipment = {}
     },
     async submitAddForm() {
-      this.addEquipment()
-      await this.waitforme(100);
-      this.getEquipments();
-      this.cancel()
+      this.$refs['addForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.addEquipment()
+          await this.waitforme(100);
+          this.getEquipments();
+          this.cancel()
+        } else {   //校验不通过
+          return false;
+        }
+      });
     },
-    async submitModifyForm() {
-      this.modifyEquipment()
-      await this.waitforme(100);
-      this.getEquipments();
-      this.cancelModify()
+    async submitModifyForm(){
+      this.$refs['modifyForm'].validate( async(valid) => {  //开启校验
+        if (valid) {   // 如果校验通过，请求接口，允许提交表单
+          // 验证通过，可以提交表单到后端
+          this.modifyEquipment()
+          await this.waitforme(100);
+          this.getEquipments();
+          this.cancelModify()
+        } else {   //校验不通过
+          return false;
+        }
+      });
     }
   }
 }
