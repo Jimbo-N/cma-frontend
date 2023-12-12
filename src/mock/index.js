@@ -1,4 +1,4 @@
-// import Mock from 'mockjs';
+ import Mock from 'mockjs';
 
 
 // Mock.mock(/\/v1\/project\/listSearchPage/, 'post', (req) => {
@@ -27,29 +27,26 @@
 //   });
 // });
 
-// Mock.mock(/\/v1\/equipment\/getDevice/, 'post', (req) => {
-//   console.log("req.body:"+req.body)
-//   const reqbody = JSON.parse(req.body)
-//   const pageSize = parseInt(reqbody.pageSize)||10 //默认大小为10
-//   const page = parseInt(reqbody.pageNumber)||1
+Mock.mock(/\/v1\/parameter\/getById/, 'post', (req) => {
   
-//   return Mock.mock({
-//     'code': 1,
-//     'message': '查询成功',
-//     'data': {
-//       'pageNumber': page ,
-//       'pageSize': pageSize,
-//       [`devices|${pageSize}`]: [{ 
-//         'serialNumber|+1':1,
-//         'number':'@word(10)',
-//         'name': '@word(5)',
-//         'status|1': ['进行中', '已完成']
-//       }]
-//       ,'url':"this is a url"
-//       ,'totalResults':23
-//     }
-//   });
-// });
+  return Mock.mock({
+    'code': 1,
+    'message': '查询成功',
+    'data': {
+      'status': '已完成' ,
+    }
+  });
+});
+Mock.mock(/\/v1\/parameter\/updateParameter/, 'post', (req) => {
+  
+  return Mock.mock({
+    'code': 1,
+    'message': '查询成功',
+    'data': {
+      'status': '已完成' ,
+    }
+  });
+});
 
 // Mock.mock(/\/v1\/user\/listSearchPage/, 'post', (req) => {
 //   console.log("req.body:"+req.body)
@@ -72,3 +69,18 @@
 //     }
 //   });
 // });
+
+Mock.mock(/\/v1\/device\/getAll/, 'post', (req) => {
+    const pageSize = 20
+    return Mock.mock({
+      'code': 1,
+      'message': '查询成功',
+      'data': {
+        [`records|${pageSize}`]: [{ 
+          'number|+1':1,
+          'name': '@word(5)',
+          'type|1': ['类型1', '类型2', '类型3']
+        }]
+      }
+    });
+  });

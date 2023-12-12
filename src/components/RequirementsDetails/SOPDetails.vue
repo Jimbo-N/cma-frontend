@@ -5,38 +5,31 @@
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'subprojects', params: this.params }">产品/项目/参数</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'parameter', params: this.params }">产品/项目/参数</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ name: 'requirements', params: this.params }">要求</el-breadcrumb-item>
-        <el-breadcrumb-item>方法（POP）</el-breadcrumb-item>
+        <el-breadcrumb-item>SOP</el-breadcrumb-item>
       </el-breadcrumb>
-      <div class="search">
-        <el-input placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search" @clear="onSearchClick"
-            @keyup.enter.native="onSearchClick" @input="onSearchClick">
-          </el-input>
-      </div>
-      <el-table stripe :data="sop">
-        <el-table-column prop="id" label="序号"></el-table-column>
-        <el-table-column prop="name" label="要求名称"></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
-        <el-table-column>
-          <template slot-scope="scope">
-            <el-upload
-              action="https://your-upload-endpoint.com"
-              :on-success="onUploadSuccess(scope.row)"
-              :before-upload="beforeUpload(scope.row)"
-              :data="{ id: scope.row.id }">
-              <el-button size="small" type="primary">上传文件</el-button>
-            </el-upload>
-          </template>
-        </el-table-column>
+      <el-row :gutter="20">
+        <el-col :span="10">
+          <label for="pdfResult">SOP检验细则：</label>
+          <span id="pdfResult">{{ this.sop }}</span>
+        </el-col>
+        <el-col :span="5">
+          <el-input v-model="linkToUpload" placeholder="请输入链接"></el-input>
+        </el-col>
+        <el-col :span="3">
+          <el-button type="primary" @click="uploadLink">上传链接</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button icon="el-icon-document" @click="copyText">复制链接</el-button>
+        </el-col>
+      </el-row>
 
-      </el-table>
     </el-main>
   </el-container>
 </template>
 
 <script>
-import { reactive, computed, toRefs } from 'vue';
 import NavBar from '../NavBar.vue';
 
 export default {
@@ -45,100 +38,63 @@ export default {
   },
   data() {
   return {
-      sop: [],
-      keyword: '',
-      onSearchClick,
-      onUploadSuccess,
-      beforeUpload,
-      filteredData,
-      //...toRefs(state),
+    params: {
+                projectid: this.$route.params.projectid,
+                standardid: this.$route.params.standardid,
+                subpid: this.$route.params.subpid
+            },
+      linkToUpload: '',
+      sop: ''
     };
   },
   created() {
-    this.fetchSop();
+    this.fetchsop();
   },
-  // setup() {
-  //   const state = reactive({
-  //     keyword: '',
-  //     tableData: [
-  //       { id: 1, name: '样品信息一览表', status: '完成' },
-  //       { id: 2, name: '样品照片', status: '进行中' },
-  //     ],
-      
-  //   });
-
-  //   const filteredData = computed(() => {
-  //     if (!state.keyword) {
-  //       return state.tableData;
-  //     }
-  //     return state.tableData.filter((data) =>
-  //       data.name.toLowerCase().includes(state.keyword.toLowerCase())
-  //     );
-  //   });
-  // },
     methods: {
-      async fetchSop() {
+      async fetchsop() {
       try {
-        const response = await this.$http.post('/v1/parameter/updateParameter', {
+        const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
+          id:this.params.subpid
         });
         
         console.log(response.data.data.sop)
-        this.sop = response.data.data.records;
-        this.status = response.data.data.status;
+        this.sop = response.data.data.sop;
       } catch (error) {
         console.error('请求错误:', error);
       }
     },
-    onSearchClick() {
-      console.log(this.keyword)
-      this.currentPage = 1
-      this.fetchSop()
-    },
-     onUploadSuccess(response, row) {
-      console.log('上传成功', response, row);
-      // 在这里更新数据模型，将上传的文件添加到当前行的文件列表中
-      if (!row.files) {
-        row.files = [];
+    async copyText() {
+      try {
+        await navigator.clipboard.writeText(this.sop);
+      } catch (err) {
+        console.error('复制文本时发生错误:', err);
       }
-      row.files.push({ name: response.name, url: response.url });
-    },
-
-     beforeUpload(file, row) {
-      console.log('上传文件', file);
-      // 这里可以添加一些上传前的验证逻辑
-      return true;
-    },
- }
+    }
+  }
 };
 </script>
 
 
 <style scoped>
-  .search{
-  margin: 20px 0;
-  display: flex; /* 使用flex布局 */
-  justify-content: flex-start; /* 让搜索框靠左对齐 */
-  float: left;
-  }
+.el-row {
+  font-family: 'Segoe UI', Arial, sans-serif; /* 设置字体 */
+}
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+.el-col {
+  font-size: 16px; 
+  color: #333;
+  line-height: 1.6; 
 }
-table, th, td {
-  border: 1px solid #ddd;
+
+.el-button {
+  font-weight: bold; 
 }
-th, td {
-  padding: 8px;
-  text-align: left;
+
+label {
+  font-weight: bold; 
+  font-style: italic; 
+  color: #555;
 }
-th {
-  background-color: #f2f2f2;
-}
-.logo {
-height: 50px;
-width: auto;
-}
+
 </style>

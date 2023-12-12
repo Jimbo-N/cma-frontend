@@ -5,24 +5,25 @@
             <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{ name: 'subprojects', params: this.params }">产品/项目/参数</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ name: 'parameter', params: this.params }">产品/项目/参数</el-breadcrumb-item>
                 <el-breadcrumb-item>要求</el-breadcrumb-item>
             </el-breadcrumb>
-            <!-- <el-row :gutter="20" class="main-header">
-                <el-col :span="4">
-                    <el-input class="right" placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search"
-                     @clear="onSearchClick" @keyup.enter.native="onSearchClick" @input="onSearchClick">
-                    </el-input>
-                </el-col>
-            </el-row> -->
             <el-row :gutter="20" class="main-header">
                 <el-col :span="2">
                     <el-button type="primary" @click="manage">管理要求</el-button>
                 </el-col>
-                <el-col :span="4" :offset="1">
+                <!-- <el-col :span="4" :offset="1">
                 <el-input placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search" @clear="onSearchClick"
                     @keyup.enter.native="onSearchClick" @input="onSearchClick">
                 </el-input>
+                </el-col> -->
+                <el-col :span="4">
+                <el-switch 
+                    v-model="status"
+                    @change="handleStatusChange"
+                    active-text="已完成"
+                    inactive-text="未完成">
+                </el-switch>
                 </el-col>
                 
             </el-row>            
@@ -33,6 +34,7 @@
                         {{ scope.row.req }}
                     </template>
                 </el-table-column>
+
                 <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
                         <el-button @click="gotosub(scope.row.req)" type="primary" size="small">查看</el-button>
@@ -75,11 +77,7 @@ export default {
             username: localStorage.getItem('realname'),
             userid: localStorage.getItem('userid'),
             projects: [],
-            totalPages: 0,
-            currentPage: 1,
-            pageSize: 8,
-            totalResults: 0,
-            keyword: '',
+            status:'',
             open: false,
             title: "创建新项目",
             form: {
@@ -119,6 +117,9 @@ export default {
                 subpid: this.$route.params.subpid
             }
         }
+    },
+    created(){
+        this.fetchStatus()
     },
     methods: {
         onSearchClick() {
@@ -166,7 +167,36 @@ export default {
             this.selectedRequirements.forEach(req => {
                 this.showRequirements[req] = true;
             });
+        },
+        async fetchStatus(){
+            try {
+                const response = await this.$http.post('/v1/parameter/getById', {
+                    token: localStorage.getItem('token'),
+                    id: this.params.subpid
+                });
+                if(response.data.data.status == '已完成'){
+                    this.status = true
+                }else{
+                    this.status = false
+                }
+                
+            } catch (error) {
+                console.error('请求错误:', error);
+            }
+        },
+        async handleStatusChange(){
+            status_text = this.status ? "已完成" : "未完成"
+            try {
+                const response = await this.$http.post('/v1/parameter/updateParameter', {
+                    token: localStorage.getItem('token'),
+                    status: this.status_text
+                });
+                
+            } catch (error) {
+                console.error('请求错误:', error);
+            }           
         }
+
     }
 }
 </script>
@@ -183,5 +213,8 @@ export default {
     padding: 10px;
     padding: 10px 0;
     margin: 12px;
+}
+.el-switch{
+  margin-top:10px;
 }
 </style>

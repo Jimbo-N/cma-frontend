@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import Login from '@/components/auth/Login.vue'
 import Register from '@/components/auth/Register.vue'
 import Edit from '@/components/auth/Edit.vue'
+import test from '@/components/test'
 
 import Projects from '@/components/Projects.vue'
 import StandardSelected from '@/components/StandardSelected'
@@ -36,6 +37,7 @@ const routes = [
   { path: '/login', component: Login, name: 'login' },  
   { path: '/register', component: Register, name: 'register' },  
   { path: '/edit', component: Edit, name:'edit'},
+  { path: '/test', component: test},
 
   { path: '/projects', component: Projects, name: 'projects' },  
   { path: '/standard', component:StandardSelected, name: 'standard' },  
