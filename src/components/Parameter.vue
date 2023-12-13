@@ -23,12 +23,17 @@
       </el-row>
 
       <el-table stripe :data="parameter">
-        <el-table-column prop="name" label="子项目名称（产品/项目/参数）"></el-table-column>
-        <el-table-column prop="status" label="完成状态"></el-table-column>
+        <el-table-column prop="name" label="子项参数名称"></el-table-column>
+        <el-table-column prop="status" label="完成状态">
+          <template scope="scope">
+          <div v-if="scope.row.status === '已完成'" style="color:green;">{{scope.row.status}}</div>
+          <div v-if="scope.row.status === '未完成'" style="color:red;">{{scope.row.status}}</div>
+        </template>
+        </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-view" @click="gotorequirements(scope.row.id)">查看</el-button>
-            <el-button type="text" icon="el-icon-delete" @click="deleteproject(scope.row.id)">删除</el-button>
+            <el-button type="text" icon="el-icon-delete" @click="deleteParameter(scope.row.id)">删除</el-button>
             <el-button type="text" icon="el-icon-edit" @click="showModifyDialog(scope.row)">修改</el-button>
           </template>
         </el-table-column>
@@ -45,6 +50,17 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="子项目名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入子项目名称" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('form')">确定</el-button>
+        <el-button @click="cancel">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :title="title2" :visible.sync="openOfModify" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="子项参数名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入子项参数名称" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -80,13 +96,14 @@ export default {
       totalResults: 0,
       keyword: '',
       open: false,
-      title: "创建新项目",
+      title: "创建新子项",
+      title2: "修改子项",
       form: {
         name: '',
       },
       rules: {
         name: [
-          { required: true, message: "子项目名称不能为空", trigger: "blur" }
+          { required: true, message: "子项参数不能为空", trigger: "blur" }
         ]
       }
     }

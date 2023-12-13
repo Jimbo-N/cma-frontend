@@ -3,9 +3,9 @@
         <NavBar></NavBar>
         <el-main>
             <el-breadcrumb separator-class="el-icon-arrow-right">
-                <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{ name: 'parameter', params: this.params }">子项列表</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ name: 'projects'}">项目列表</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ name: 'parameter' }">子项列表</el-breadcrumb-item>
                 <el-breadcrumb-item>要求</el-breadcrumb-item>
             </el-breadcrumb>
             <el-row :gutter="20" class="main-header">
@@ -28,7 +28,7 @@
                 
             </el-row>            
 
-            <el-table :data="filteredTableData" stripe  style="width: 100%">
+            <el-table :data="filteredTableData" stripe  style="width: 500px;margin:auto" >
                 <el-table-column prop="req" label="要求" width="auto">
                     <template slot-scope="scope">
                         {{ scope.row.req }}
@@ -43,7 +43,7 @@
             </el-table>
 
         </el-main>
-        <el-dialog title="管理要求" :visible.sync="dialogVisible">
+        <el-dialog title="管理要求" :visible.sync="dialogVisible" >
             <el-checkbox-group v-model="selectedRequirements">
                 <el-checkbox label="人员">人员</el-checkbox>
                 <el-checkbox label="设备">设备</el-checkbox>
@@ -77,14 +77,14 @@ export default {
             username: localStorage.getItem('realname'),
             userid: localStorage.getItem('userid'),
             projects: [],
-            status:'',
+            status:false,
             open: false,
             title: "创建新项目",
             form: {
                 name: '',
                 reason: ''
             },
-
+            parameter:null,
             tableData: [{
                 req: '人员',    //Members
             }, {
@@ -111,11 +111,7 @@ export default {
                 '模拟试验': true,
             },
             selectedRequirements: ['人员', '设备', '样品', '方法(SOP)', '设施', '比对验证', '模拟试验'],
-            params: {
-                projectid: this.$route.params.projectid,
-                standardid: this.$route.params.standardid,
-                subpid: this.$route.params.subpid
-            }
+            
         }
     },
     created(){
@@ -129,32 +125,32 @@ export default {
         },
         gotosub(row) {
             if(row == '人员'){
-            this.$router.push({ name: 'members', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'members' })
+            
             }
             if(row == '设备'){
-            this.$router.push({ name: 'equipment', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'equipment' })
+            
             }
             if(row == '样品'){
-            this.$router.push({ name: 'sampledetails', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'sampledetails'})
+            
             }
             if(row == '方法(SOP)'){
-            this.$router.push({ name: 'sopdetails', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'sopdetails'})
+            
             }
             if(row == '设施'){
-            this.$router.push({ name: 'facilitydetails', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'facilitydetails'})
+           
             }
             if(row == '比对验证'){
-            this.$router.push({ name: 'comveridetails', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'comveridetails' })
+            
             }
             if(row == '模拟试验'){
-            this.$router.push({ name: 'simexpdetails', params: this.params })
-            console.log("params:" + JSON.stringify(this.params))
+            this.$router.push({ name: 'simexpdetails' })
+            
             }
         },
         manage() {
@@ -172,24 +168,35 @@ export default {
             try {
                 const response = await this.$http.post('/v1/parameter/getById', {
                     token: localStorage.getItem('token'),
-                    id: this.params.subpid
+                    id: localStorage.getItem('parameterid')
                 });
+                if(response.data.code===200)
+                {
                 if(response.data.data.status == '已完成'){
                     this.status = true
                 }else{
                     this.status = false
                 }
-                
+                this.parameter=response.data.data
+                }
             } catch (error) {
                 console.error('请求错误:', error);
             }
         },
         async handleStatusChange(){
-            status_text = this.status ? "已完成" : "未完成"
+            var status_text = this.status ? "已完成" : "未完成"
             try {
                 const response = await this.$http.post('/v1/parameter/updateParameter', {
                     token: localStorage.getItem('token'),
-                    status: this.status_text
+                    id:localStorage.getItem('parameterid'),
+                    status: status_text,
+                    name: this.parameter.name,
+                    sop: this.parameter.sop,
+                    facility: this.parameter.facility,
+                    bidui: this.parameter.bidui,
+                    moni: this.parameter.moni,
+                    sampleinfo: this.parameter.sampleinfo,
+                    samplepic: this.parameter.samplepic,
                 });
                 
             } catch (error) {

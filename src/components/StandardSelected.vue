@@ -28,7 +28,12 @@
           <el-table-column prop="standard.name" label="标准名称"></el-table-column>
           <el-table-column prop="standard.number" label="标准编号"></el-table-column>
         </el-table-column>
-        <el-table-column prop="status" label="完成状态"></el-table-column>
+        <el-table-column prop="status" label="完成状态">
+          <template scope="scope">
+          <div v-if="scope.row.status === '已完成'" style="color:green;">{{scope.row.status}}</div>
+          <div v-if="scope.row.status === '未完成'" style="color:red;">{{scope.row.status}}</div>
+          </template>
+        </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-view" @click="gotoparameter(scope.row.id)">查看</el-button>

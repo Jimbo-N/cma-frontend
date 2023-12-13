@@ -18,7 +18,12 @@
 
       <el-table stripe :data="projects">
         <el-table-column prop="name" label="项目名称" align="center"></el-table-column>
-        <el-table-column prop="status" label="状态" align="center"></el-table-column>
+        <el-table-column prop="status" label="完成状态" align="center">
+          <template scope="scope">
+          <div v-if="scope.row.status === '已完成'" style="color:green;">{{scope.row.status}}</div>
+          <div v-if="scope.row.status === '未完成'" style="color:red;">{{scope.row.status}}</div>
+          </template>
+        </el-table-column>
         <el-table-column prop="createUser.realname" label="创建人" align="center"></el-table-column>
         <el-table-column prop="createTime" label="创建日期" align="center"></el-table-column>
         <el-table-column label="操作" align="center">

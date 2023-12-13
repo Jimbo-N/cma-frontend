@@ -11,17 +11,17 @@
       </el-breadcrumb>
       <el-row :gutter="20">
         <el-col :span="10">
-          <label for="pdfResult">设施证明文件：</label>
-          <span id="pdfResult">{{ this.facility }}</span>
+          <label>设施证明文件：</label>
+          <el-link>{{ this.facility }}</el-link>
         </el-col>
         <el-col :span="5">
-          <el-input v-model="linkToUpload" placeholder="请输入链接"></el-input>
+          <el-input v-model="facility" placeholder="请输入链接"></el-input>
         </el-col>
         <el-col :span="3">
-          <el-button type="primary" @click="uploadLink">上传链接</el-button>
+          <el-button type="primary" @click="uploadLink()">上传链接</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button icon="el-icon-document" @click="copyText">复制链接</el-button>
+          <el-button icon="el-icon-document" @click="copyText(parameter.facility)">复制链接</el-button>
         </el-col>
       </el-row>
 
@@ -38,38 +38,67 @@ export default {
   },
   data() {
   return {
-    params: {
-                projectid: this.$route.params.projectid,
-                standardid: this.$route.params.standardid,
-                subpid: this.$route.params.subpid
-            },
-      linkToUpload: '',
+   
+      parameter:null,
       facility: ''
     };
   },
   created() {
-    this.fetchfacility();
+    this.fetchParameter();
   },
     methods: {
-      async fetchfacility() {
+      async fetchParameter() {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id:this.params.subpid
+          id: localStorage.getItem('parameterid')
         });
-        
-        console.log(response.data.data.facility)
-        this.facility = response.data.data.facility;
+        if (response.data.code == 200) {
+          this.parameter = response.data.data
+        }
       } catch (error) {
         console.error('请求错误:', error);
       }
     },
-    async copyText() {
+    async uploadLink() {
       try {
-        await navigator.clipboard.writeText(this.facility);
-      } catch (err) {
-        console.error('复制文本时发生错误:', err);
+        const response = await this.$http.post('/v1/parameter/updateParameter', {
+          token: localStorage.getItem('token'),
+          id: localStorage.getItem('parameterid'),
+          status: this.parameter.status,
+          name: this.parameter.name,
+          sop: this.parameter.sop,
+          facility: this.facility,
+          bidui: this.parameter.bidui,
+          moni: this.parameter.moni,
+          sampleinfo: this.parameter.sampleinfo,
+          samplepic: this.parameter.samplepic,
+          
+        })
+        if(response.data.code==200)
+        {
+          this.$message.success("上传成功")
+        }
+
+      } catch (error) {
+        console.error('请求错误:', error);
       }
+    },
+    copyText(text) {
+      navigator.permissions.query({ name: 'clipboard-write' }).then(result => { 
+        if (result.state === 'granted') { 
+            
+          var blob = new Blob([text], {type: 'text/plain'}); 
+            var item = new ClipboardItem({'text/plain': blob}); 
+            navigator.clipboard.write([item]).then(function() { 
+              
+            }, function(error) { 
+
+            }); 
+        } else { 
+            
+        } 
+    }); 
     }
   }
 };

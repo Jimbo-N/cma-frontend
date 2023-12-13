@@ -11,11 +11,11 @@
       </el-breadcrumb>
       <el-row :gutter="20">
         <el-col :span="10">
-          <label for="pdfResult">模拟实验报告：</label>
-          <span id="pdfResult">{{ this.moni }}</span>
+          <label >模拟实验报告：</label>
+          <el-link>{{ this.parameter.moni }}</el-link>
         </el-col>
         <el-col :span="5">
-          <el-input v-model="linkToUpload" placeholder="请输入链接"></el-input>
+          <el-input v-model="moni" placeholder="请输入链接"></el-input>
         </el-col>
         <el-col :span="3">
           <el-button type="primary" @click="uploadLink">上传链接</el-button>
@@ -37,40 +37,67 @@ export default {
     NavBar,
   },
   data() {
-  return {
-    params: {
-                projectid: this.$route.params.projectid,
-                standardid: this.$route.params.standardid,
-                subpid: this.$route.params.subpid
-            },
-      linkToUpload: '',
+    return {
+      parameter: null,
       moni: ''
     };
   },
   created() {
-    this.fetchmoni();
+    this.fetchParameter();
   },
-    methods: {
-      async fetchmoni() {
+  methods: {
+    async fetchParameter() {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id:this.params.subpid
+          id: localStorage.getItem('parameterid')
         });
-        
-        console.log(response.data.data.moni)
-        this.moni = response.data.data.moni;
-        this.status = response.data.data.status;
+        if (response.data.code == 200) {
+          this.parameter = response.data.data
+        }
       } catch (error) {
         console.error('请求错误:', error);
       }
     },
-    async copyText() {
+    async uploadLink() {
       try {
-        await navigator.clipboard.writeText(this.moni);
-      } catch (err) {
-        console.error('复制文本时发生错误:', err);
+        const response = await this.$http.post('/v1/parameter/updateParameter', {
+          token: localStorage.getItem('token'),
+          id: localStorage.getItem('parameterid'),
+          status: this.parameter.status,
+          name: this.parameter.name,
+          sop: this.parameter.sop,
+          facility: this.parameter.facility,
+          bidui: this.parameter.bidui,
+          moni: this.moni,
+          sampleinfo: this.parameter.sampleinfo,
+          samplepic: this.parameter.samplepic,
+          
+        })
+        if(response.data.code==200)
+        {
+          this.$message.success("上传成功")
+        }
+
+      } catch (error) {
+        console.error('请求错误:', error);
       }
+    },
+    copyText(text) {
+      navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
+        if (result.state === 'granted') {
+
+          var blob = new Blob([text], { type: 'text/plain' });
+          var item = new ClipboardItem({ 'text/plain': blob });
+          navigator.clipboard.write([item]).then(function () {
+
+          }, function (error) {
+
+          });
+        } else {
+
+        }
+      });
     }
   }
 };
@@ -79,23 +106,23 @@ export default {
 
 <style scoped>
 .el-row {
-  font-family: 'Segoe UI', Arial, sans-serif; /* 设置字体 */
+  font-family: 'Segoe UI', Arial, sans-serif;
+  /* 设置字体 */
 }
 
 .el-col {
-  font-size: 16px; 
+  font-size: 16px;
   color: #333;
-  line-height: 1.6; 
+  line-height: 1.6;
 }
 
 .el-button {
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 label {
-  font-weight: bold; 
-  font-style: italic; 
+  font-weight: bold;
+  font-style: italic;
   color: #555;
 }
-
 </style>

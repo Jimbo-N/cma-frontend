@@ -3,25 +3,25 @@
     <NavBar></NavBar>
     <el-main>
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'parameter', params: this.params }">产品/项目/参数</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'requirements', params: this.params }">要求</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'projects'}">项目列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'parameter'}">产品/项目/参数</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'requirements' }">要求</el-breadcrumb-item>
         <el-breadcrumb-item>对比试验</el-breadcrumb-item>
       </el-breadcrumb>
       <el-row :gutter="20">
         <el-col :span="10">
-          <label for="pdfResult">比对/验证结果PDF：</label>
-          <span id="pdfResult">{{ this.bidui }}</span>
+          <label >比对/验证结果PDF：</label>
+          <el-link>{{ this.parameter.bidui }}</el-link>
         </el-col>
         <el-col :span="5">
-          <el-input v-model="linkToUpload" placeholder="请输入链接"></el-input>
+          <el-input v-model="bidui" placeholder="请输入链接"></el-input>
         </el-col>
-        <el-col :span="3">
+        <el-col :span="2">
           <el-button type="primary" @click="uploadLink">上传链接</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button icon="el-icon-document" @click="copyText">复制链接</el-button>
+          <el-button icon="el-icon-document" @click="copyText(parameter.bidui)">复制链接</el-button>
         </el-col>
       </el-row>
 
@@ -38,38 +38,70 @@ export default {
   },
   data() {
   return {
-    params: {
-                projectid: this.$route.params.projectid,
-                standardid: this.$route.params.standardid,
-                subpid: this.$route.params.subpid
-            },
-      linkToUpload: '',
+
+      parameter:null,
       bidui: ''
     };
   },
   created() {
-    this.fetchbidui();
+    this.fetchParameter();
   },
-    methods: {
-      async fetchbidui() {
+  methods: {
+    async fetchParameter() {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id:this.params.subpid
+          id: localStorage.getItem('parameterid')
         });
-        
-        console.log(response.data.data.bidui)
-        this.bidui = response.data.data.bidui;
+        if (response.data.code == 200) {
+          this.parameter = response.data.data
+        }
       } catch (error) {
         console.error('请求错误:', error);
       }
     },
-    async copyText() {
+    
+    async uploadLink() {
       try {
-        await navigator.clipboard.writeText(this.bidui);
-      } catch (err) {
-        console.error('复制文本时发生错误:', err);
+        const response = await this.$http.post('/v1/parameter/updateParameter', {
+          token: localStorage.getItem('token'),
+          id: localStorage.getItem('parameterid'),
+          status: this.parameter.status,
+          name: this.parameter.name,
+          sop: this.parameter.sop,
+          facility: this.parameter.facility,
+          bidui: this.bidui,
+          moni: this.parameter.moni,
+          sampleinfo: this.parameter.sampleinfo,
+          samplepic: this.parameter.samplepic,
+          
+        })
+        if(response.data.code==200)
+        {
+          this.$message.success("上传成功")
+        }
+        
+        
+
+      } catch (error) {
+        console.error('请求错误:', error);
       }
+    },
+    copyText(text) {
+      navigator.permissions.query({ name: 'clipboard-write' }).then(result => { 
+        if (result.state === 'granted') { 
+            
+          var blob = new Blob([text], {type: 'text/plain'}); 
+            var item = new ClipboardItem({'text/plain': blob}); 
+            navigator.clipboard.write([item]).then(function() { 
+              
+            }, function(error) { 
+
+            }); 
+        } else { 
+            
+        } 
+    }); 
     }
   }
 };

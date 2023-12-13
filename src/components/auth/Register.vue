@@ -97,7 +97,7 @@ export default {
           this.$message.error('验证码错误');
           return;
         }
-        if (this.form.password !== this.identifyCode.confirmPassword) {
+        if (this.form.password !== this.form.confirmPassword) {
           this.$message.error('两次输入的密码不同');
           return;
         }
