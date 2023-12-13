@@ -4,7 +4,7 @@
         <el-col :span="2">
             <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
         </el-col>
-        <el-col :span="2" :offset="9">
+        <el-col :span="3" :offset="8">
           <el-button :type="$route.path === '/projects' ? 'primary' : 'text'" @click="gotoMain">项目列表</el-button>
         </el-col>
         <el-col :span="2">
@@ -28,11 +28,19 @@
         </el-col>
       </el-row>
       <el-dialog title="个人信息" :visible.sync="dialogVisible" :modal-append-to-body="false" >
-        <div class="user-info">
-              <p class="user-id">工号：{{ userid }}</p>
-              <p class="user-name">姓名：{{ realname }}</p>
-         </div>
+        <div class="user-inf">
+          <div class="user-row">
+            <p class="id">工号：{{ userid }}</p>
+          </div>
+          <div class="user-row">
+            <p class="name">姓名：{{ realname }}</p>
+          </div>
+          <div class="user-row">
+            <p class="privilege">权限：{{ convertPrivilegeToText(privilege) }}</p>
+          </div>
+        </div>
          <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="gotoLogin(); dialogVisible = false">退出登录</el-button>
               <el-button type="primary" @click="gotoEdit(); dialogVisible = false">修改密码</el-button>
               <el-button @click="dialogVisible = false">确定</el-button>
             </span>
@@ -47,15 +55,29 @@
       return {
         realname: localStorage.getItem('realname'),
         userid: localStorage.getItem('userid'),
+        privilege: localStorage.getItem('privilege'),
         dialogVisible: false
       };
     },
     methods: {
+      convertPrivilegeToText(privilege) {
+			const privilegeMap = {
+				4: '超级管理员',
+				3: '管理员',
+				2: '技术员',
+				1: '浏览者',
+				0: '黑名单'
+			};
+			return privilegeMap[privilege] || '未知权限';
+		},
       gotoMain() {
         if (this.$route.path !== "/projects") {
           this.$router.push("/projects");
           
         }
+      },
+      gotoLogin(){
+        this.$router.push("/login");
       },
       gotoEmp() {
         this.$router.push("/employee");
@@ -135,6 +157,28 @@
     .header .el-col{
       margin-top:5px;
     }
+
+    .user-inf {
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  align-items: center;
+
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+ .user-row {
+  margin-bottom: 10px;
+  margin-left: 40%;
+  text-align: left;
+}
+
+.user-row:last-child {
+  margin-bottom: 0;
+}
+
+
 
   </style>
   
