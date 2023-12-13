@@ -15,10 +15,8 @@ import PersonLib from '@/components/Lib/PersonLib.vue'
 import Employee from '@/components/Employee'
 
 //要求页面
-import MemberDetails from '@/components/RequirementsDetails/Members/MemberDetails'
 import Members from '@/components/RequirementsDetails/Members/Members'
 
-import EquipmentDetails from '@/components/RequirementsDetails/Equipment/EquipmentDetails'
 import Equipment from '@/components/RequirementsDetails/Equipment/Equipment'
 
 import ComVeriDetails from '@/components/RequirementsDetails/ComVeriDetails'
@@ -47,9 +45,7 @@ const routes = [
   { path: '/employee', component: Employee,name:'Employee'},
 
   { path: '/members', component: Members, name: 'members' },  
-  { path: '/memberdetails', component: MemberDetails, name: 'memberdetails' },  
   { path: '/equipment', component: Equipment, name: 'equipment' },  
-  { path: '/equipmentdetails', component: EquipmentDetails, name: 'equipmentdetails' },  
   { path: '/comveridetails', component:ComVeriDetails, name: 'comveridetails' },  
   { path: '/facilitydetails', component:FacilityDetails, name: 'facilitydetails' },  
   { path: '/sampledetails', component:SampleDetails, name: 'sampledetails' },  

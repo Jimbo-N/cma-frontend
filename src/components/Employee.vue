@@ -94,7 +94,7 @@ export default {
 					pagesize: this.pageSize,
 					search: this.keyword,
         });
-        console.log('后端返回：' + response.data.data.current)
+
         this.employees = response.data.data.records;
 		// 遍历员工数组，为每个员工转换权限值
 		this.employees.forEach(employee => {
@@ -113,7 +113,6 @@ export default {
 		//更新人员权限
 		async updatePrivilege(row) {
 			try{
-				console.log("mark:"+row.privilege)
 				const response = await this.$http.post('/v1/user/setPrivilege', {
 					token: row.token,
 					userid: row.id,
@@ -139,7 +138,6 @@ export default {
 
 		//搜索功能实现
 		onSearchClick() {
-			console.log(this.keyword)
 			this.currentPage = 1
 			this.getEmployees()
 		},

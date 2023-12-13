@@ -187,7 +187,7 @@ export default {
         this.$router.push("/personlib");
       },
     onSearchClick() {
-      console.log(this.keyword)
+
       this.currentPage = 1
       this.getPersons()
     },
@@ -217,7 +217,6 @@ export default {
       if(selection.length){
         this.deleteButton=false
         this.chosenIds = selection.map(row => row.id);
-        console.log(this.chosenIds)
       }
 
     },
@@ -233,7 +232,7 @@ export default {
         });
 
         this.persons= response.data.data.records;
-        console.log('后端返回：' +  this.persons )
+
         this.currentPage = response.data.data.current;
         this.pageSize = response.data.data.size;
         this.totalResults = response.data.data.total;
@@ -253,7 +252,7 @@ export default {
           peixun:this.chosenPerson.peixun,
           shouquan:this.chosenPerson.shouquan,
         })
-        console.log("response.data",response.data)
+
         if (response.data.code === 200) {
           this.$message.success("修改成功")
         }
@@ -297,7 +296,7 @@ export default {
       this.chosenIds=[]
     },
     async addPerson(){
-      console.log("addPerson")
+
       try {
         const response = await this.$http.post('/v1/person/addPerson', {
 
@@ -307,7 +306,7 @@ export default {
           peixun:this.form.peixun,
           shoquan:this.form.shouquan,
         });
-        console.log('addPerson：' + response.data)
+
         if (response.data.code === 200) {
           this.$message.success("添加成功")
         }

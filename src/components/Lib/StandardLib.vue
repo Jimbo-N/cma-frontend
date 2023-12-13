@@ -157,7 +157,7 @@ export default {
       this.$router.push("/personlib");
     },
     onSearchClick() {
-      console.log(this.keyword)
+
       this.currentPage = 1
       this.getStandards()
     },
@@ -187,7 +187,7 @@ export default {
       if (selection.length) {
         this.deleteButton = false
         this.chosenIds = selection.map(row => row.id);
-        console.log(this.chosenIds)
+
       }
 
     },
@@ -203,7 +203,7 @@ export default {
         });
 
         this.standards = response.data.data.records;
-        console.log('后端返回：' + this.standards)
+
         this.currentPage = response.data.data.current;
         this.pageSize = response.data.data.size;
         this.totalResults = response.data.data.total;
@@ -213,7 +213,7 @@ export default {
       }
     },
     async modifyStandard() {
-      console.log("this.chosenStandard.bigCategory=", this.chosenStandard.bigCategory)
+
       try {
         const response = await this.$http.post('/v1/standard/updateStandard', {
 
@@ -224,7 +224,7 @@ export default {
           bigCategory: this.chosenStandard.bigCategory,
           category: this.chosenStandard.category,
         })
-        console.log("response.data", response.data)
+
         if (response.data.code === 200) {
           this.$message.success("修改成功")
         }
@@ -268,7 +268,7 @@ export default {
       this.chosenIds = []
     },
     async addStandard() {
-      console.log("addStandard")
+
       try {
         const response = await this.$http.post('/v1/standard/addStandard', {
 
@@ -278,7 +278,7 @@ export default {
           bigCategory: this.form.bigCategory,
           category: this.form.category,
         });
-        console.log('addStandard：' + response.data)
+
         if (response.data.code === 200) {
           this.$message.success("添加成功")
         }

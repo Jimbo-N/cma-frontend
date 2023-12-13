@@ -335,7 +335,7 @@ export default {
       console.log("peopleLen=", this.peopleLen)
     },
     async getEquipments() {
-      console.log("get!!!")
+
       try {
         const response = await this.$http.post('/v1/device/listSearchPage', {
 
@@ -345,8 +345,6 @@ export default {
           search: this.keyword
 
         });
-        console.log('后端返回：' + response.data.data.current)
-        console.log("device", response.data.data.records)
         this.equipments = response.data.data.records;
 
         this.currentPage = response.data.data.current;
@@ -358,7 +356,6 @@ export default {
       }
     },
     onSearchClick() {
-      console.log(this.keyword)
       this.currentPage = 1
       this.getEquipments()
 
@@ -389,7 +386,7 @@ export default {
       if (selection.length) {
         this.deleteButton = false
         this.chosenIds = selection.map(row => row.id);
-        console.log(this.chosenIds)
+
       }
 
     },
@@ -428,7 +425,6 @@ export default {
         data: formData
       })
         .then((res) => {
-          console.log(res.data);
           if (res.data.code === 200) {
             this.$message.success("修改成功")
           }
@@ -442,7 +438,6 @@ export default {
       this.cancel()
     },
     async deleteEquipment(id) {
-      console.log('删除')
       try {
         const response = await this.$http.post('/v1/device/deleteDevice', {
 

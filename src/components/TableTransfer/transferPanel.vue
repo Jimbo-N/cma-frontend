@@ -23,9 +23,9 @@
         <el-table
           v-bind="tableProps"
           :data="filteredData"
-          pagination
-          style="min-height: 100%"
-          :height="tableHeight"
+         
+          
+          :height="350"
           @selection-change="selectionChange"
           :empty-text="emptyText"
           ref="table"

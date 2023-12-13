@@ -227,7 +227,7 @@ export default {
       }
     },
     onSearchClick() {
-      console.log(this.keyword)
+
       this.currentPage = 1
       this.fetchParameter()
     }

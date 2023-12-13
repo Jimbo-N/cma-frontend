@@ -5,7 +5,7 @@
             <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{ name: 'subprojects', params: this.params }">产品/项目/参数</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ name: 'parameter', params: this.params }">子项列表</el-breadcrumb-item>
                 <el-breadcrumb-item>要求</el-breadcrumb-item>
             </el-breadcrumb>
             <!-- <el-row :gutter="20" class="main-header">

@@ -220,8 +220,7 @@ export default {
           search: this.keyword
 
         });
-        console.log('后端返回：' + response.data.data.current)
-        console.log(response.data.data.projects)
+
         this.projects = response.data.data.records;
 
         this.currentPage = response.data.data.current;
@@ -259,7 +258,6 @@ export default {
       }
     },
     async download(id){
-      console.log("要下载",id)
       window.open(axios.defaults.baseURL+'/v1/file/download/'+id)
 
     },
@@ -268,12 +266,11 @@ export default {
       this.fetchProjects();
     },
     gotoDetails(id) {
-      console.log(id)
       localStorage.setItem("projectid",id)
       this.$router.push({ name: 'standard'});    
     },
     onSearchClick() {
-      console.log(this.keyword)
+
       this.currentPage = 1
       this.fetchProjects()
     },
