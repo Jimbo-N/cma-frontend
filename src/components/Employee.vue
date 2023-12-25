@@ -1,8 +1,5 @@
 <template>
 	<el-container>
-		<NavBar></NavBar>
-
-		
 		<!-- 表格主体 -->
 		<el-main>
 			<!-- 搜索栏等同款样式 -->
@@ -77,10 +74,11 @@ export default {
 			currentPage: 1,
 			pageSize: 8,
 			totalResults:0,
-			
+			privilege:0,
 		}
 	},
 	created(){
+		this.getuserinfo()
 		this.getEmployees()
 	},
 
@@ -114,11 +112,10 @@ export default {
 		async updatePrivilege(row) {
 			try{
 				const response = await this.$http.post('/v1/user/setPrivilege', {
-					token: row.token,
 					userid: row.id,
 					privilege: row.privilege
 				});
-				if(response.data.code === 0){
+				if(response.data.code === 200){
 					this.$message.success("修改成功")
 				}
 			} catch(error) {
@@ -160,9 +157,8 @@ export default {
 		},
 		hasprivilege(num)
 		{
-			this.getuserinfo()
-			var privilege=localStorage.getItem('privilege')
-			return privilege>=num
+			
+			return this.privilege>=num
 		},
 		async getuserinfo()
       {
@@ -175,6 +171,7 @@ export default {
             localStorage.setItem('userid', response.data.data.id)
             localStorage.setItem('realname', response.data.data.realname)
             localStorage.setItem('privilege', response.data.data.privilege)
+			this.privilege=response.data.data.privilege
           } else {
             this.$message.error(response.data.msg)
             console.log(response.data.msg)

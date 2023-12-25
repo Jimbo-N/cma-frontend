@@ -1,15 +1,22 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
     <el-main>
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ name: 'projects'}">项目列表</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'parameter'}">产品/项目/参数</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'parameter'}">参数列表</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ name: 'requirements' }">要求</el-breadcrumb-item>
         <el-breadcrumb-item>对比试验</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-row :gutter="20">
+
+      <el-row style="width: 80%;height: 30px;">
+        <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
+        <el-col :span="6">当前标准:{{ this.standarditem.standard.name }}</el-col>
+        <el-col :span="6">当前参数:{{ this.parameter.name }}</el-col>
+        <el-col :span="6">当前位置:比对验证详细</el-col>
+      </el-row>
+
+      <el-row style="margin-bottom: 20px;">
         <el-col :span="10">
           <label >比对/验证结果PDF：</label>
           <el-link>{{ this.parameter.bidui }}</el-link>
@@ -39,7 +46,9 @@ export default {
   data() {
   return {
 
-      parameter:null,
+    project:JSON.parse(localStorage.getItem("project")),
+      standarditem:JSON.parse(localStorage.getItem("standarditem")),
+      parameter:JSON.parse(localStorage.getItem("parameter")),
       bidui: ''
     };
   },
@@ -51,7 +60,7 @@ export default {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem('parameterid')
+          id: localStorage.getItem('parameter').id
         });
         if (response.data.code == 200) {
           this.parameter = response.data.data
@@ -65,7 +74,7 @@ export default {
       try {
         const response = await this.$http.post('/v1/parameter/updateParameter', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem('parameterid'),
+          id: JSON.parse(localStorage.getItem('parameter')).id,
           status: this.parameter.status,
           name: this.parameter.name,
           sop: this.parameter.sop,

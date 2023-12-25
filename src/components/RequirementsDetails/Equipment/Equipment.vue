@@ -1,14 +1,11 @@
 <template>
   <el-container>
     <el-main class="out">
-      <div>
-        <NavBar></NavBar>
-      </div>
       <div class="myrouter">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="myrouter">
           <el-breadcrumb-item :to="{ name: 'projects' }">项目列表</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ name: 'parameter' }">参数</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'parameter' }">参数列表</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ name: 'requirements' }">要求</el-breadcrumb-item>
           <el-breadcrumb-item>设备详细</el-breadcrumb-item>
         </el-breadcrumb>
@@ -16,22 +13,22 @@
       
       <!-- 面包屑 --------------------------------------------------------------------->
 
-      <el-row style="width: 80%;height: 60px;padding-top: 20px;">
-        <el-col :span="6">当前项目:{{ this.projectid }}</el-col>
-        <el-col :span="6">当前标准:{{ this.standarditemid }}</el-col>
-        <el-col :span="6">当前参数:{{ this.parameterid }}</el-col>
+      <el-row style="width: 80%;height: 30px;">
+        <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
+        <el-col :span="6">当前标准:{{ this.standarditem.standard.name }}</el-col>
+        <el-col :span="6">当前参数:{{ this.parameter.name }}</el-col>
         <el-col :span="6">当前位置:设备详细</el-col>
       </el-row>
 
 
-      <el-row class="modifybtn">
+      <el-row :span="4" class="modifybtn">
         <el-button type="primary" @click="showModify = true">编辑设备</el-button>
       </el-row>
       <!-- tool --------------------------------------------------------------------->
 
 
       <el-row class="cont" type="flex" justify="center" style="width: 100%;">
-        <el-col :span="20">
+        <el-col :span="24">
           <el-table stripe :data="value2" :cell-style="{ 'text-align': 'center' }"
             :header-cell-style="{ 'text-align': 'center' }">
             <el-table-column prop="number" label="设备编号"></el-table-column>
@@ -86,9 +83,9 @@ export default {
   data() {
 
     return {
-      projectid: null,
-      standarditemid: null,
-      parameterid: null,
+      project:JSON.parse(localStorage.getItem("project")),
+      standarditem:JSON.parse(localStorage.getItem("standarditem")),
+      parameter:JSON.parse(localStorage.getItem("parameter")),
       showModify: false,
       modifySaved: true,
       showConfirm: false,
@@ -178,14 +175,14 @@ export default {
       }
       catch (e) {
         // alert("fail to get device");
-        alert(e);
+        
       }
     },
     async getparameterdevice() {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem("parameterid")
+          id: this.parameter.id
         });
         if (response.data.code === 200) {
           this.value2 = response.data.data.deviceList
@@ -200,7 +197,7 @@ export default {
         }
       }
       catch (e) {
-        alert(e);
+        
       }
     },
     async updateparameterdevice() {
@@ -208,7 +205,7 @@ export default {
         const response = await this.$http.post('/v1/parameter/updateDevice', {
 
           token: localStorage.getItem('token'),
-          id: localStorage.getItem("parameterid"),
+          id: this.parameter.id,
           deviceidlist: this.value
 
         })
@@ -230,9 +227,7 @@ export default {
     }
   }
   , created() {
-    this.projectid = localStorage.getItem('projectid');
-    this.standarditemid = localStorage.getItem('standarditemid');
-    this.parameterid = localStorage.getItem('parameterid');
+
     this.getDevice();
     this.getparameterdevice()
     //   alert(123);
@@ -247,10 +242,7 @@ export default {
 
 <style>
 .out {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
 }
 
 .sel {
@@ -276,10 +268,9 @@ export default {
 }
 
 .modifybtn {
-  width: 100%;
-  display: flex;
-  justify-content: left;
-  padding-left: 100px;
+  width: 10%;
+  padding-left: 10px;
+  
 }
 
 .diagFoot {

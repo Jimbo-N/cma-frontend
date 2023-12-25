@@ -1,6 +1,5 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
     <el-main>
       <el-row :gutter="20" class="main-header" type="flex" align="middle">
         <el-col :span="4">
@@ -206,10 +205,11 @@
 import NavBar from '../NavBar.vue';
 import equipmentLib from "@/components/Lib/EquipmentLib.vue";
 import axios from "axios";
-
+import Navmenu from '@/components/Navmenu.vue';
 export default {
   components: {
-    NavBar
+    NavBar,
+    Navmenu
   },
   data() {
     let validateBuyDate = (rule, value, callback) => {

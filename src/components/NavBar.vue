@@ -4,22 +4,7 @@
         <el-col :span="2">
             <img src="@/assets/logo.png" alt="Logo" class="logo" @click="gotoMain" >
         </el-col>
-        <el-col :span="3" :offset="8">
-          <el-button :type="$route.path === '/projects' ? 'primary' : 'text'" @click="gotoMain">项目列表</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button :type="$route.path === '/employee' ? 'primary' : 'text'" @click="gotoEmp" :hidden="!hasprivilege(4)">用户管理</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button :type="$route.path === '/personlib' ? 'primary' : 'text'" @click="gotoPersonlib">人员库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button :type="$route.path === '/standardlib' ? 'primary' : 'text'" @click="gotoStandardlib">标准库</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button :type="$route.path === '/equipmentlib' ? 'primary' : 'text'" @click="gotoEquipmentlib">设备库</el-button>
-        </el-col>
-        <el-col :span="3" class="user-display"  >
+        <el-col :span="2" :offset="20" class="user-display"  >
             <el-avatar icon="el-icon-user-solid" @click.native="dialogVisible = true;"></el-avatar>
             <div class="user-info">
               <p class="user-id">{{ userid }}</p>
@@ -72,7 +57,7 @@
 		},
       gotoMain() {
         if (this.$route.path !== "/projects") {
-          this.$router.push("/projects");
+          this.$router.push("/main/projects");
           
         }
       },
@@ -115,7 +100,7 @@
           } else {
             this.$message.error(response.data.msg)
             console.log(response.data.msg)
-			this.$route.push("/login")
+			  this.$route.push("/login")
           }
         } catch (error) {
           this.$message.error('登录失败')

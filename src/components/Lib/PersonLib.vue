@@ -1,11 +1,10 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
     <el-main>
       <el-row :gutter="20" class="main-header" type="flex" align="middle">
         <el-col :span="4">
           <el-input placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search" @clear="onSearchClick"
-                    @keyup.enter.native="onSearchClick" @input="onSearchClick">
+            @keyup.enter.native="onSearchClick" @input="onSearchClick">
           </el-input>
         </el-col>
         <el-col :span="2">
@@ -14,31 +13,18 @@
 
 
         <el-col :span="7">
-          <el-button type="primary" icon="el-icon-plus"  size="small" @click="showAddDialog" plain>添加</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="small" :disabled="deleteButton" @click="batchDelete" plain>删除</el-button>
+          <el-button type="primary" icon="el-icon-plus" size="small" @click="showAddDialog" plain>添加</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="small" :disabled="deleteButton" @click="batchDelete"
+            plain>删除</el-button>
         </el-col>
       </el-row>
 
       <el-table stripe :data="persons" @selection-change="getChosenRows">
         <el-table-column type="selection" width="55" />
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="培训情况" >
-                <span>{{ props.row.peixun }}</span>
-              </el-form-item>
-              <el-form-item label="考核资料">
-                <span>{{ props.row.kaohe }}</span>
-              </el-form-item>
-              <el-form-item label="授权批准">
-                <span>{{ props.row.shouquan }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
+            <el-button type="text" icon="el-icon-view" @click="gotopersoninfo(scope.row)">查看</el-button>
             <el-button type="text" icon="el-icon-edit" @click="showModifyDialog(scope.row)">修改</el-button>
             <el-button type="text" icon="el-icon-delete" @click="deletePerson(scope.row.id)">删除</el-button>
           </template>
@@ -47,8 +33,8 @@
       </el-table>
 
       <el-pagination class="bottom" @current-change="handlePageChange" @size-change="handleSizeChange"
-                     :current-page="currentPage" :page-size="pageSize" :page-sizes="[8, 15, 30]"
-                     layout="sizes, total,prev, pager, next" :total="totalResults">
+        :current-page="currentPage" :page-size="pageSize" :page-sizes="[8, 15, 30]"
+        layout="sizes, total,prev, pager, next" :total="totalResults">
       </el-pagination>
 
 
@@ -57,15 +43,6 @@
         <el-form ref="form" :model="form" :rules="rules" label-width="180px">
           <el-form-item label="姓名" prop="name">
             <el-input v-model="form.name" placeholder="请输入姓名" />
-          </el-form-item>
-          <el-form-item label="培训情况" prop="kaohe">
-            <el-input v-model="form.kaohe" placeholder="请输入培训情况"></el-input>
-          </el-form-item>
-          <el-form-item label="考核资料" prop="peixun">
-            <el-input v-model="form.peixun" placeholder="请输入考核资料"></el-input>
-          </el-form-item>
-          <el-form-item label="授权批准" prop="shouquan">
-            <el-input v-model="form.shoquan" placeholder="请输入授权批准"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -80,15 +57,6 @@
           <el-form-item label="姓名" prop="name">
             <el-input v-model="chosenPerson.name" placeholder="请输入姓名" />
           </el-form-item>
-          <el-form-item label="培训情况" prop="kaohe">
-            <el-input v-model="chosenPerson.kaohe" placeholder="请输入培训情况"></el-input>
-          </el-form-item>
-          <el-form-item label="考核资料" prop="peixun">
-            <el-input v-model="chosenPerson.peixun" placeholder="请输入考核资料"></el-input>
-          </el-form-item>
-          <el-form-item label="授权批准" prop="shouquan">
-            <el-input v-model="chosenPerson.shouquan" placeholder="请输入授权批准"></el-input>
-          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitModifyForm">确定</el-button>
@@ -101,39 +69,34 @@
 
 
 <script>
-import NavBar from '../NavBar.vue';
-import equipmentLib from "@/components/Lib/EquipmentLib.vue";
+
 
 export default {
-  components:{
-    NavBar
+  components: {
   },
-  data(){
-    return{
+  data() {
+    return {
       realname: localStorage.getItem('realname'),
       userid: localStorage.getItem('userid'),
-      keyword:'',
-      persons:[],
-      chosenPerson: { },
+      keyword: '',
+      persons: [],
+      chosenPerson: {},
       totalPages: 0,
       currentPage: 1,
       pageSize: 8,
       totalResults: 0,
       open: false,
-      openOfModify:false,
-      deleteButton:true,
-      chosenIds:[],
-      tittle:"添加人员",
-      tittle2:"修改人员",
-      form:{
-        kaohe:'',
-        peixun:'',
-        name:'',
-        shouquan: '',
+      openOfModify: false,
+      deleteButton: true,
+      chosenIds: [],
+      tittle: "添加人员",
+      tittle2: "修改人员",
+      form: {
+        name: '',
       },
       rules: {
-        name:[
-          {required:true, message:"姓名不能为空", trigger:"blur"}
+        name: [
+          { required: true, message: "姓名不能为空", trigger: "blur" }
         ],
       },
     };
@@ -141,23 +104,11 @@ export default {
   created() {
     this.getPersons()
   },
-  methods:{
-    gotoMain() {
-      this.$router.push("/projects");
+  methods: {
+    gotopersoninfo(item) {
+      localStorage.setItem("person", JSON.stringify(item))
+      this.$router.push({ name: 'personinfo' });
     },
-    gotoEmp() {
-      this.$router.push("/employee");
-    },
-    gotoStandardlib() {
-      this.$router.push("/standardlib");
-    },
-    gotoEquipmentlib() {
-      this.$router.push("/equipmentlib");
-    },
-    gotoPersonlib()
-      {
-        this.$router.push("/personlib");
-      },
     onSearchClick() {
 
       this.currentPage = 1
@@ -171,12 +122,12 @@ export default {
       this.pageSize = newSize
       this.getPersons();
     },
-    showAddDialog(){
-      this.open=true
+    showAddDialog() {
+      this.open = true
     },
-    showModifyDialog(chosenPerson){
-      this.openOfModify=true
-      this.chosenPerson=chosenPerson
+    showModifyDialog(chosenPerson) {
+      this.openOfModify = true
+      this.chosenPerson = chosenPerson
     },
     waitforme(millisec) {
       return new Promise(resolve => {
@@ -185,14 +136,14 @@ export default {
         }, millisec);
       })
     },
-    getChosenRows(selection){
-      if(selection.length){
-        this.deleteButton=false
+    getChosenRows(selection) {
+      if (selection.length) {
+        this.deleteButton = false
         this.chosenIds = selection.map(row => row.id);
       }
 
     },
-    async getPersons(){
+    async getPersons() {
       try {
         const response = await this.$http.post('/v1/person/listSearchPage', {
 
@@ -203,7 +154,7 @@ export default {
 
         });
 
-        this.persons= response.data.data.records;
+        this.persons = response.data.data.records;
 
         this.currentPage = response.data.data.current;
         this.pageSize = response.data.data.size;
@@ -213,16 +164,13 @@ export default {
         console.error('请求错误:', error);
       }
     },
-    async modifyPerson(){
+    async modifyPerson() {
       try {
-        const response =await  this.$http.post('/v1/person/updatePerson', {
+        const response = await this.$http.post('/v1/person/updatePerson', {
 
           token: localStorage.getItem('token'),
-          id:this.chosenPerson.id,
-          kaohe:this.chosenPerson.kaohe,
-          name:this.chosenPerson.name,
-          peixun:this.chosenPerson.peixun,
-          shouquan:this.chosenPerson.shouquan,
+          id: this.chosenPerson.id,
+          name: this.chosenPerson.name,
         })
 
         if (response.data.code === 200) {
@@ -234,9 +182,9 @@ export default {
       await this.waitforme(100);
       this.getPersons();
     },
-    async deletePerson(id){
+    async deletePerson(id) {
       try {
-        const response =await  this.$http.post('/v1/person/deletePerson', {
+        const response = await this.$http.post('/v1/person/deletePerson', {
 
           token: localStorage.getItem('token'),
           id: id
@@ -250,12 +198,12 @@ export default {
       await this.waitforme(100);
       this.getPersons();
     },
-    async batchDelete(){
+    async batchDelete() {
       try {
-        const response =await  this.$http.post('/v1/person/deletebatchPerson', {
+        const response = await this.$http.post('/v1/person/deletebatchPerson', {
 
           token: localStorage.getItem('token'),
-          personidlist:this.chosenIds
+          personidlist: this.chosenIds
         })
         if (response.data.code === 200) {
           this.$message.success("删除成功")
@@ -265,18 +213,15 @@ export default {
       }
       await this.waitforme(100);
       this.getPersons();
-      this.chosenIds=[]
+      this.chosenIds = []
     },
-    async addPerson(){
+    async addPerson() {
 
       try {
         const response = await this.$http.post('/v1/person/addPerson', {
 
           token: localStorage.getItem('token'),
-          kaohe:this.form.kaohe,
-          name:this.form.name,
-          peixun:this.form.peixun,
-          shoquan:this.form.shouquan,
+          name: this.form.name,
         });
 
         if (response.data.code === 200) {
@@ -290,16 +235,13 @@ export default {
     },
     cancel() {
       this.open = false;
-      this.form={
-        kaohe:'',
-        name:'',
-        peixun:'',
-        shoquan:'',
+      this.form = {
+        name: '',
       }
     },
-    cancelModify(){
-      this.openOfModify=false;
-      this.chosenPerson={}
+    cancelModify() {
+      this.openOfModify = false;
+      this.chosenPerson = {}
     },
     async submitAddForm() {
       this.addPerson()
@@ -307,7 +249,7 @@ export default {
       this.getPersons();
       this.cancel()
     },
-    async submitModifyForm(){
+    async submitModifyForm() {
       this.modifyPerson()
       await this.waitforme(100);
       this.getPersons();
@@ -331,26 +273,29 @@ export default {
   border-color: #66666672;
   /* box-shadow: 0 2px 4px rgba(0,0,0,.1);  */
 }
-.header img{
+
+.header img {
   cursor: pointer;
 }
-.header .el-button{
+
+.header .el-button {
   /* color:#333; */
   font-weight: 500;
   font-size: 17px;
-  font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
 }
-.header .el-col{
-  margin-top:5px;
+
+.header .el-col {
+  margin-top: 5px;
 }
 
 .demo-table-expand label {
   width: 130px;
   color: #99a9bf;
 }
+
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
   width: 50%;
-}
-</style>
+}</style>

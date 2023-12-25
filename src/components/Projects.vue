@@ -1,89 +1,90 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
-    <el-main>
-      <el-row :gutter="20" class="main-header">
-        <el-col :span="4">
-          <el-input placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search" @clear="onSearchClick"
-            @keyup.enter.native="onSearchClick" @input="onSearchClick">
-          </el-input>
-        </el-col>
-        <!-- <el-col :span="2">
+      <el-main>
+        <el-row :gutter="20" class="main-header">
+          <el-col :span="4">
+            <el-input placeholder="请输入搜索关键词" v-model="keyword" clearable prefix-icon="el-icon-search"
+              @clear="onSearchClick" @keyup.enter.native="onSearchClick" @input="onSearchClick">
+            </el-input>
+          </el-col>
+          <!-- <el-col :span="2">
             <el-button type="text" icon="el-icon-search" @click="onSearchClick"></el-button>
           </el-col> -->
-        <el-col :span="2">
-          <el-button type="primary" @click="handleAdd">创建项目</el-button>
-        </el-col>
-      </el-row>
+          <el-col :span="2">
+            <el-button type="primary" @click="handleAdd">创建项目</el-button>
+          </el-col>
+        </el-row>
 
-      <el-table stripe :data="projects">
-        <el-table-column prop="name" label="项目名称" align="center"></el-table-column>
-        <el-table-column prop="status" label="完成状态" align="center">
-          <template scope="scope">
-          <div v-if="scope.row.status === '已完成'" style="color:green;">{{scope.row.status}}</div>
-          <div v-if="scope.row.status === '未完成'" style="color:red;">{{scope.row.status}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createUser.realname" label="创建人" align="center"></el-table-column>
-        <el-table-column prop="createTime" label="创建日期" align="center"></el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button type="text" icon="el-icon-view" @click="gotoDetails(scope.row.id)">查看</el-button>
-            <el-button type="text" icon="el-icon-delete" @click="deleteproject(scope.row.id)">删除</el-button>
-            <el-button type="text" icon="el-icon-download" @click="generateTables(scope.row.id)">生成表格</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
 
-      <el-pagination class="bottom" @current-change="handlePageChange" @size-change="handleSizeChange"
-        :current-page="currentPage" :page-size="pageSize" :page-sizes="[8, 15, 30]"
-        layout="sizes, total,prev, pager, next" :total="totalResults">
-      </el-pagination>
+        <el-table stripe :data="projects">
+          <el-table-column prop="name" label="项目名称" align="center"></el-table-column>
+          <el-table-column prop="status" label="完成状态" align="center">
+            <template scope="scope">
+              <div v-if="scope.row.status === '已完成'" style="color:green;">{{ scope.row.status }}</div>
+              <div v-if="scope.row.status === '未完成'" style="color:red;">{{ scope.row.status }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createUser.realname" label="创建人" align="center"></el-table-column>
+          <el-table-column prop="createTime" label="创建日期" align="center"></el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button type="text" icon="el-icon-view" @click="gotoDetails(scope.row)">查看</el-button>
+              <el-button type="text" icon="el-icon-delete" @click="deleteproject(scope.row.id)">删除</el-button>
+              <el-button type="text" icon="el-icon-download" @click="generateTables(scope.row.id)">生成表格</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 
-    </el-main>
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="项目名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入项目名称" />
-        </el-form-item>
+        <el-pagination class="bottom" @current-change="handlePageChange" @size-change="handleSizeChange"
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[8, 15, 30]"
+          layout="sizes, total,prev, pager, next" :total="totalResults">
+        </el-pagination>
 
-        <el-form-item label="立项依据" prop="reason">
-          <el-input v-model="form.reason" type="textarea" placeholder="请输入立项依据"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('form')">确定</el-button>
-        <el-button @click="cancel">取消</el-button>
-      </div>
-    </el-dialog>
-<!--    生成表格对话框-->
-    <el-dialog :title="title2" :visible.sync="open2" width="600px" append-to-body>
+      </el-main>
+      <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+        <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+          <el-form-item label="项目名称" prop="name">
+            <el-input v-model="form.name" placeholder="请输入项目名称" />
+          </el-form-item>
+
+          <el-form-item label="立项依据" prop="reason">
+            <el-input v-model="form.reason" type="textarea" placeholder="请输入立项依据"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm('form')">确定</el-button>
+          <el-button @click="cancel">取消</el-button>
+        </div>
+      </el-dialog>
+      <!--    生成表格对话框-->
+      <el-dialog :title="title2" :visible.sync="open2" width="600px" append-to-body>
         <el-row type="flex" align="middle" style="width: 100%">
-          <el-col :span="6" style="font-size: 15px;" >仪器设备信息表：</el-col>
-          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table3" @click="download(table3.id)">{{ table3.filename }}</el-button></el-col>
+          <el-col :span="6" style="font-size: 15px;">仪器设备信息表：</el-col>
+          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table3" @click="download(table3.id)">{{
+            table3.filename }}</el-button></el-col>
         </el-row>
         <el-row type="flex" align="middle">
           <el-col :span="7" style="font-size: 15px;">检验检测能力申请表:</el-col>
-          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table4"  @click="download(table4.id)">{{ table4.filename }}</el-button></el-col>
+          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table4" @click="download(table4.id)">{{
+            table4.filename }}</el-button></el-col>
         </el-row>
-        <el-row type="flex" align="middle" >
+        <el-row type="flex" align="middle">
           <el-col :span="9" style="font-size: 15px;">仪器设备(标准物质)配置表：</el-col>
-          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table5"  @click="download(table5.id)">{{ table5.filename }}</el-button></el-col>
+          <el-col :span="5"><el-button style="font-size: 15px;" type="text" v-if="table5" @click="download(table5.id)">{{
+            table5.filename }}</el-button></el-col>
         </el-row>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="closeGenerate" type="primary">关闭</el-button>
-      </div>
-    </el-dialog>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="closeGenerate" type="primary">关闭</el-button>
+        </div>
+      </el-dialog>
   </el-container>
 </template>
   
 <script>
 
 import axios from "axios";
-import NavBar from './NavBar.vue';
 export default {
-  components:{
-    NavBar
+  components: {
   },
   data() {
     return {
@@ -98,7 +99,7 @@ export default {
       open: false,
       title: "创建新项目",
       title2: "生成表格",
-      open2:false,
+      open2: false,
       form: {
         name: '',
         reason: ''
@@ -112,39 +113,21 @@ export default {
           { min: 3, max: 1000, message: '长度在 3 到 1000 个字符', trigger: 'blur' }
         ],
       },
-      table3:{},
-      table4:{},
-      table5:{}
+      table3: {},
+      table4: {},
+      table5: {}
     };
   },
   created() {
     this.fetchProjects();
   },
   methods: {
-    gotoMain() {
-        if (this.$route.path !== "/projects") {
-          this.$router.push("/projects");
-        }
-      },
-      gotoEmp() {
-        this.$router.push("/employee");
-      },
-      gotoStandardlib() {
-        this.$router.push("/standardlib");
-      },
-      gotoEquipmentlib() {
-        this.$router.push("/equipmentlib");
-      },
-      gotoPersonlib()
-      {
-        this.$router.push("/personlib");
-      },
     cancel() {
       this.open = false;
       this.reset();
     },
-    closeGenerate(){
-      this.open2=false
+    closeGenerate() {
+      this.open2 = false
     },
     reset() {
       this.form = {
@@ -182,7 +165,7 @@ export default {
         if (response.data.code === 200) {
           this.$message.success("添加成功")
         }
-        else{
+        else {
           this.$message.error(response.data.message)
         }
       } catch (error) {
@@ -200,7 +183,7 @@ export default {
 
     async deleteproject(id) {
       try {
-        const response =await  this.$http.post('/v1/project/deleteproject', {
+        const response = await this.$http.post('/v1/project/deleteproject', {
 
           token: localStorage.getItem('token'),
           id: id
@@ -208,7 +191,7 @@ export default {
         if (response.data.code === 200) {
           this.$message.success("删除成功")
         };
-        
+
       } catch (error) {
         console.error('请求错误:', error);
       }
@@ -236,43 +219,43 @@ export default {
         console.error('请求错误:', error);
       }
     },
-    async generateTables(id){
-      this.table3={}
-      this.table4={}
-      this.table5={}
+    async generateTables(id) {
+      this.table3 = {}
+      this.table4 = {}
+      this.table5 = {}
       try {
-        const response =await this.$http.post('/v1/project/generateexcel', {
+        const response = await this.$http.post('/v1/project/generateexcel', {
 
           token: localStorage.getItem('token'),
           id: id
         })
         if (response.data.code === 200) {
           const fileList = response.data.data.fileList
-          this.table3=fileList[0]
-          this.table4=fileList[1]
-          this.table5=fileList[2]
-          this.title2="生成成功"
-          this.open2=true
-        }else{
-          this.title2="生成失败"
-          this.open2=true
+          this.table3 = fileList[0]
+          this.table4 = fileList[1]
+          this.table5 = fileList[2]
+          this.title2 = "生成成功"
+          this.open2 = true
+        } else {
+          this.title2 = "生成失败"
+          this.open2 = true
         }
 
       } catch (error) {
         console.error('请求错误:', error);
       }
     },
-    async download(id){
-      window.open(axios.defaults.baseURL+'/v1/file/download/'+id)
+    async download(id) {
+      window.open(axios.defaults.baseURL + '/v1/file/download/' + id)
 
     },
     handlePageChange(newPage) {
       this.currentPage = newPage;
       this.fetchProjects();
     },
-    gotoDetails(id) {
-      localStorage.setItem("projectid",id)
-      this.$router.push({ name: 'standard'});    
+    gotoDetails(item) {
+      localStorage.setItem("project",JSON.stringify(item))
+      this.$router.push({ name: 'standard' });
     },
     onSearchClick() {
 
@@ -283,14 +266,14 @@ export default {
       this.pageSize = newSize
       this.fetchProjects()
     },
-   
+
   }
 };
 </script>
 
 <style>
 .el-container {
-  padding: 0 100px;
+  padding: 0px 10px;
 }
 
 

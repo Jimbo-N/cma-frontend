@@ -14,49 +14,51 @@ import EquipmentLib from '@/components/Lib/EquipmentLib.vue'
 import StandardLib from '@/components/Lib/StandardLib.vue'
 import PersonLib from '@/components/Lib/PersonLib.vue'
 import Employee from '@/components/Employee'
-
+import Personinfo from '@/components/Personinfo.vue'
 //要求页面
 import Members from '@/components/RequirementsDetails/Members/Members'
-
 import Equipment from '@/components/RequirementsDetails/Equipment/Equipment'
-
 import ComVeriDetails from '@/components/RequirementsDetails/ComVeriDetails'
 import FacilityDetails from '@/components/RequirementsDetails/FacilityDetails'
 import SampleDetails from '@/components/RequirementsDetails/SampleDetails'
 import SimExpDetails from '@/components/RequirementsDetails/SimExpDetails'
 import SOPDetails from '@/components/RequirementsDetails/SOPDetails'
 
+import Layout1 from '@/components/Layout1.vue';
 
 
 Vue.use(VueRouter);
 
 const routes = [
-  { path: '/', redirect:"/login" },
-  { path: '/login', component: Login, name: 'login' },  
-  { path: '/register', component: Register, name: 'register' },  
-  { path: '/edit', component: Edit, name:'edit'},
+  { path: '/', redirect: "/login" },
+  { path: '/login', component: Login, name: 'login' },
+  { path: '/register', component: Register, name: 'register' },
+  { path: '/edit', component: Edit, name: 'edit' },
 
-  { path: '/projects', component: Projects, name: 'projects' },  
-  { path: '/standard', component:StandardSelected, name: 'standard' },  
-  { path: '/parameter', component: Parameter, name: 'parameter' },  
-  { path: '/requirements', component: Requirements, name: 'requirements' },  
-  { path: '/equipmentlib', component: EquipmentLib, name: 'equipmentlib' },  
-  { path: '/standardlib', component: StandardLib, name: 'standardlib' },  
-  { path: '/personlib', component: PersonLib, name: 'personlib' },
-  { path: '/employee', component: Employee,name:'Employee'},
+  {
+    path: '/main', component: Layout1, name: 'main',
+    children: [
+      { path: 'projects', component: Projects, name: 'projects' },
+      { path: 'standard', component: StandardSelected, name: 'standard' },
+      { path: 'parameter', component: Parameter, name: 'parameter' },
+      { path: 'requirements', component: Requirements, name: 'requirements' },
+      { path: 'equipmentlib', component: EquipmentLib, name: 'equipmentlib' },
+      { path: 'standardlib', component: StandardLib, name: 'standardlib' },
+      { path: 'personlib', component: PersonLib, name: 'personlib' },
+      { path: 'employee', component: Employee, name: 'Employee' },
+      { path: 'personinfo', component: Personinfo, name: 'personinfo' },
 
-  { path: '/members', component: Members, name: 'members' },  
-  { path: '/equipment', component: Equipment, name: 'equipment' },  
-  { path: '/comveridetails', component:ComVeriDetails, name: 'comveridetails' },  
-  { path: '/facilitydetails', component:FacilityDetails, name: 'facilitydetails' },  
-  { path: '/sampledetails', component:SampleDetails, name: 'sampledetails' },  
-  { path: '/simexpdetails', component:SimExpDetails, name: 'simexpdetails' },  
-  { path: '/sopdetails', component: SOPDetails, name: 'sopdetails' }
+      { path: 'members', component: Members, name: 'members' },
+      { path: 'equipment', component: Equipment, name: 'equipment' },
+      { path: 'comveridetails', component: ComVeriDetails, name: 'comveridetails' },
+      { path: 'facilitydetails', component: FacilityDetails, name: 'facilitydetails' },
+      { path: 'sampledetails', component: SampleDetails, name: 'sampledetails' },
+      { path: 'simexpdetails', component: SimExpDetails, name: 'simexpdetails' },
+      { path: 'sopdetails', component: SOPDetails, name: 'sopdetails' }
+    ]
+  },
 
-  
-  
 
-  
 ];
 
 let routerPush = VueRouter.prototype.push;

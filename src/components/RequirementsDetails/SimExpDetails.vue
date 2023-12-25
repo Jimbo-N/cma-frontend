@@ -1,15 +1,20 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
     <el-main>
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'parameter', params: this.params }">产品/项目/参数</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'requirements', params: this.params }">要求</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'projects'}">项目列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'standard'}">标准列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'parameter' }">参数列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'requirements' }">要求</el-breadcrumb-item>
         <el-breadcrumb-item>模拟试验</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-row :gutter="20">
+      <el-row style="width: 80%;height: 30px;">
+        <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
+        <el-col :span="6">当前标准:{{ this.standarditem.standard.name }}</el-col>
+        <el-col :span="6">当前参数:{{ this.parameter.name }}</el-col>
+        <el-col :span="6">当前位置:模拟实验详细</el-col>
+      </el-row>
+      <el-row style="margin-bottom: 20px;">
         <el-col :span="10">
           <label >模拟实验报告：</label>
           <el-link>{{ this.parameter.moni }}</el-link>
@@ -38,7 +43,9 @@ export default {
   },
   data() {
     return {
-      parameter: null,
+      project:JSON.parse(localStorage.getItem("project")),
+      standarditem:JSON.parse(localStorage.getItem("standarditem")),
+      parameter:JSON.parse(localStorage.getItem("parameter")),
       moni: ''
     };
   },
@@ -63,7 +70,7 @@ export default {
       try {
         const response = await this.$http.post('/v1/parameter/updateParameter', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem('parameterid'),
+          id: JSON.parse(localStorage.getItem('parameter')).id,
           status: this.parameter.status,
           name: this.parameter.name,
           sop: this.parameter.sop,

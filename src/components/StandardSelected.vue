@@ -3,12 +3,15 @@
     <NavBar></NavBar>
     <el-main>
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/projects' }">项目列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'projects' }">项目列表</el-breadcrumb-item>
         <el-breadcrumb-item>标准列表</el-breadcrumb-item>
       </el-breadcrumb>
       <!-- <el-row>项目id:{{ params.projectid }}</el-row>
         <el-button @click="gotosub(5)">去子项列表的按钮</el-button> -->
 
+        <el-row style="width: 80%;height: 30px;">
+        <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
+      </el-row>
 
       <el-row :gutter="20" class="main-header">
         <el-col :span="4">
@@ -36,7 +39,7 @@
         </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
-            <el-button type="text" icon="el-icon-view" @click="gotoparameter(scope.row.id)">查看</el-button>
+            <el-button type="text" icon="el-icon-view" @click="gotoparameter(scope.row)">查看</el-button>
             <el-button type="text" icon="el-icon-delete" @click="deletestandardItem(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -53,7 +56,7 @@
     <el-dialog title="编辑标准" :visible.sync="showModify" width="80%" :before-close="processModify">
     <el-container slot="footer" class="diagFoot">
       <table-transfer filterable :filter-method="filterMethod" filter-placeholder="搜索标准" row-key="id"
-        :titles="['设备库', '已选设备']" v-model="value" :data="data">
+        :titles="['标准库', '已选标准']" v-model="value" :data="data">
         <template>
 
           <el-table-column label="大类" prop="bigCategory"></el-table-column>
@@ -89,12 +92,8 @@ export default {
   },
   data() {
     return {
-      params: {
-        projectid: null,
-        standarditemid: null,
-        parameterid: null
+      project:JSON.parse(localStorage.getItem("project")),
 
-      },
       standard: [],
       totalPages: 0,
       currentPage: 1,
@@ -110,14 +109,13 @@ export default {
     }
   },
   created() {
-    this.params.projectid = localStorage.getItem("projectid")
     this.fetchStandard()
     this.getallstandard()
     this.getproject()
   },
   methods: {
-    gotoparameter(id) {
-      localStorage.setItem("standarditemid", id)
+    gotoparameter(item) {
+      localStorage.setItem("standarditem", JSON.stringify(item))
       this.$router.push({ name: 'parameter' })
 
     },
@@ -129,11 +127,9 @@ export default {
           pagenumber: this.currentPage,
           pagesize: this.pageSize,
           search: this.keyword,
-          projectid: this.params.projectid
+          projectid: this.project.id
 
         });
-        console.log('后端返回：' + response.data.data.current)
-        console.log(response.data.data.projects)
         this.standard = response.data.data.records;
         this.currentPage = response.data.data.current;
         this.pageSize = response.data.data.size;
@@ -239,21 +235,17 @@ export default {
         });
         this.data = resp.data.data;
 
-
-        // alert(resp);
-
-
       }
       catch (e) {
         // alert("fail to get device");
-        alert(e);
+        
       }
     },
     async getproject() {
       try {
         const response = await this.$http.post('/v1/project/getbyid', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem("projectid")
+          id: this.project.id
         });
         if (response.data.code === 200) {
           var temp1 = response.data.data.standardItemList
@@ -267,7 +259,7 @@ export default {
         }
       }
       catch (e) {
-        alert(e);
+        
       }
     },
     async updatestandarditem() {
@@ -275,7 +267,7 @@ export default {
         const response = await this.$http.post('/v1/project/updateStandarditem', {
 
           token: localStorage.getItem('token'),
-          id: localStorage.getItem("projectid"),
+          id: this.project.id,
           standardidlist: this.value
 
         })

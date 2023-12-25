@@ -217,7 +217,7 @@
     height: 450px;
     display: flex;
     align-items: center;
-    width: 850px;
+    width: 1100px;
   
     .fs-transfer-option {
       display: inline-block;

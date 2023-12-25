@@ -1,6 +1,5 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
     <el-main>
       <el-row :gutter="20" class="main-header" type="flex" align="middle">
         <el-col :span="4">
@@ -23,7 +22,7 @@
       <el-table stripe :data="standards" @selection-change="getChosenRows">
         <el-table-column type="selection" width="55" />
 
-        <el-table-column prop="name" label="大类"></el-table-column>
+        <el-table-column prop="bigCategory" label="大类"></el-table-column>
         <el-table-column prop="category" label="类别"></el-table-column>
         <el-table-column prop="name" label="标准名称"></el-table-column>
         <el-table-column prop="number" label="标准编号"></el-table-column>

@@ -23,7 +23,7 @@
             <SIdentify :identifyCode="identifyCode"></SIdentify>
         </div>
         <el-form-item>
-          <el-button type="primary" block @click="handleRegister"></el-button>
+          <el-button type="primary" block @click="handleRegister">修改密码</el-button>
         </el-form-item>
         
       </el-form>

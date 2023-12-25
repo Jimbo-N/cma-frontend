@@ -1,13 +1,16 @@
 <template>
   <el-container>
-    <NavBar></NavBar>
     <el-main>
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'projects', params: this.params }">项目列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'standard', params: this.params }">标准列表</el-breadcrumb-item>
-        <el-breadcrumb-item>子项列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'projects'}">项目列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
+        <el-breadcrumb-item>参数列表</el-breadcrumb-item>
       </el-breadcrumb>
 
+      <el-row style="width: 80%;height: 30px;">
+        <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
+        <el-col :span="6">当前标准:{{ this.standarditem.standard.name }}</el-col>
+      </el-row>
 
 
 
@@ -32,7 +35,7 @@
         </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
-            <el-button type="text" icon="el-icon-view" @click="gotorequirements(scope.row.id)">查看</el-button>
+            <el-button type="text" icon="el-icon-view" @click="gotorequirements(scope.row)">查看</el-button>
             <el-button type="text" icon="el-icon-delete" @click="deleteParameter(scope.row.id)">删除</el-button>
             <el-button type="text" icon="el-icon-edit" @click="showModifyDialog(scope.row)">修改</el-button>
           </template>
@@ -80,11 +83,8 @@ export default {
   },
   data() {
     return {
-      params: {
-        projectid: null,
-        standarditemid: null,
-        parameterid: null,
-      },
+      project:JSON.parse(localStorage.getItem("project")),
+      standarditem:JSON.parse(localStorage.getItem("standarditem")),
       username: localStorage.getItem('realname'),
       userid: localStorage.getItem('userid'),
       parameter: [],
@@ -109,14 +109,12 @@ export default {
     }
   },
   created() {
-    this.params.projectid = localStorage.getItem("projectid")
-    this.params.standarditemid = localStorage.getItem("standarditemid")
     this.fetchParameter();
   },
   methods: {
-    gotorequirements(id) {
-      this.params.parameterid = id
-      localStorage.setItem("parameterid",id)
+    gotorequirements(item) {
+    
+      localStorage.setItem("parameter",JSON.stringify(item))
       this.$router.push({ name: 'requirements'})
     },
     async fetchParameter() {
@@ -127,7 +125,7 @@ export default {
           pagenumber: this.currentPage,
           pagesize: this.pageSize,
           search: this.keyword,
-          standarditemid: this.params.standarditemid
+          standarditemid: this.standarditem.id
 
 
         });
@@ -183,7 +181,7 @@ export default {
 
           token: localStorage.getItem('token'),
           name: this.form.name,
-          standarditemid: this.params.standarditemid,
+          standarditemid: this.standarditem.id,
           sop: '',
           facility: '',
           bidui: '',

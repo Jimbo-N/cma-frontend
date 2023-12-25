@@ -5,9 +5,15 @@
             <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item :to="{ name: 'projects'}">项目列表</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{ name: 'parameter' }">子项列表</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ name: 'parameter' }">参数列表</el-breadcrumb-item>
                 <el-breadcrumb-item>要求</el-breadcrumb-item>
             </el-breadcrumb>
+            <el-row style="width: 80%;height: 30px;">
+        <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
+        <el-col :span="6">当前标准:{{ this.standarditem.standard.name }}</el-col>
+        <el-col :span="6">当前参数:{{ this.parameter.name }}</el-col>
+      </el-row>
+
             <el-row :gutter="20" class="main-header">
                 <el-col :span="2">
                     <el-button type="primary" @click="manage">管理要求</el-button>
@@ -84,7 +90,10 @@ export default {
                 name: '',
                 reason: ''
             },
-            parameter:null,
+            project:JSON.parse(localStorage.getItem("project")),
+            standarditem:JSON.parse(localStorage.getItem("standarditem")),
+
+            parameter:JSON.parse(localStorage.getItem('parameter')),
             tableData: [{
                 req: '人员',    //Members
             }, {
@@ -168,7 +177,7 @@ export default {
             try {
                 const response = await this.$http.post('/v1/parameter/getById', {
                     token: localStorage.getItem('token'),
-                    id: localStorage.getItem('parameterid')
+                    id: this.parameter.id
                 });
                 if(response.data.code===200)
                 {
@@ -188,7 +197,7 @@ export default {
             try {
                 const response = await this.$http.post('/v1/parameter/updateParameter', {
                     token: localStorage.getItem('token'),
-                    id:localStorage.getItem('parameterid'),
+                    id:this.parameter.id,
                     status: status_text,
                     name: this.parameter.name,
                     sop: this.parameter.sop,

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import Login from './components/auth/Login.vue'
 export default {
   name: 'App',
   data:function(){
@@ -14,7 +13,7 @@ export default {
     }
   },
   components: {
-    Login
+
 
   }
 }
