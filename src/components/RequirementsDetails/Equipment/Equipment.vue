@@ -3,9 +3,9 @@
     <el-main class="out">
       <div class="myrouter">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="myrouter">
-          <el-breadcrumb-item :to="{ name: 'projects' }">项目列表</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ name: 'standard' }">标准列表</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ name: 'parameter' }">参数列表</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'projects' }">{{ this.project.name }}</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'standard' }">{{ this.standarditem.standard.name }}</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ name: 'parameter' }">{{ this.parameter.name }}</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ name: 'requirements' }">要求</el-breadcrumb-item>
           <el-breadcrumb-item>设备详细</el-breadcrumb-item>
         </el-breadcrumb>
@@ -13,12 +13,12 @@
       
       <!-- 面包屑 --------------------------------------------------------------------->
 
-      <el-row style="width: 80%;height: 30px;">
+      <!-- <el-row style="width: 80%;height: 30px;">
         <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
         <el-col :span="6">当前标准:{{ this.standarditem.standard.name }}</el-col>
         <el-col :span="6">当前参数:{{ this.parameter.name }}</el-col>
         <el-col :span="6">当前位置:设备详细</el-col>
-      </el-row>
+      </el-row> -->
 
 
       <el-row :span="4" class="modifybtn">

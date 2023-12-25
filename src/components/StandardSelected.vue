@@ -3,15 +3,15 @@
     <NavBar></NavBar>
     <el-main>
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'projects' }">项目列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'projects' }">{{ this.project.name }}</el-breadcrumb-item>
         <el-breadcrumb-item>标准列表</el-breadcrumb-item>
       </el-breadcrumb>
       <!-- <el-row>项目id:{{ params.projectid }}</el-row>
         <el-button @click="gotosub(5)">去子项列表的按钮</el-button> -->
 
-        <el-row style="width: 80%;height: 30px;">
+        <!-- <el-row style="width: 80%;height: 30px;">
         <el-col :span="6">当前项目:{{ this.project.name }}</el-col>
-      </el-row>
+      </el-row> -->
 
       <el-row :gutter="20" class="main-header">
         <el-col :span="4">
