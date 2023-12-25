@@ -19,7 +19,7 @@
       <el-row style="margin-bottom: 20px;">
         <el-col :span="10">
           <label>设施证明文件：</label>
-          <el-link>{{ this.facility }}</el-link>
+          <el-link>{{ this.parameter.facility }}</el-link>
         </el-col>
         <el-col :span="5">
           <el-input v-model="facility" placeholder="请输入链接"></el-input>
@@ -60,7 +60,7 @@ export default {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem('parameter').id
+          id: JSON.parse(localStorage.getItem('parameter')).id
         });
         if (response.data.code == 200) {
           this.parameter = response.data.data

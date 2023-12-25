@@ -41,7 +41,7 @@
     <el-dialog title="编辑人员" :visible.sync="showModify" width="80%" :before-close="processModify">
       <el-container slot="footer" class="diagFoot">
         <table-transfer filterable :filter-method="filterMethod" filter-placeholder="搜索人员" row-key="id"
-          :titles="['人员库', '已选设备']" v-model="value" :data="data">
+          :titles="['人员库', '已选人员']" v-model="value" :data="data">
           <template>
 
             <el-table-column label="姓名" prop="name"></el-table-column>

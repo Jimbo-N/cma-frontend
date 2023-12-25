@@ -75,7 +75,7 @@ export default {
       try {
         const response = await this.$http.post('/v1/parameter/getById', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem('parameter').id
+          id: JSON.parse(localStorage.getItem('parameter')).id
         });
         if (response.data.code == 200) {
           this.parameter = response.data.data
@@ -88,7 +88,7 @@ export default {
       try {
         const response = await this.$http.post('/v1/parameter/updateParameter', {
           token: localStorage.getItem('token'),
-          id: localStorage.getItem('parameter').id,
+          id: JSON.parse(localStorage.getItem('parameter')).id,
           status: this.parameter.status,
           name: this.parameter.name,
           sop: this.parameter.sop,

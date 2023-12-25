@@ -89,10 +89,10 @@ export default {
         }
 
         try {
-          const response = await this.$http.post('/v1/user/edit', {
+          const response = await this.$http.post('/v1/user/changePassword', {
             token: localStorage.getItem('token'),
-            password: this.form.password,//原始密码
-            newpassword: this.form.newpassword
+            oldPassword: this.form.password,//原始密码
+            newPassword: this.form.newpassword
           });
 
           if (response.data.code === 200) {
